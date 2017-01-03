@@ -255,7 +255,7 @@ function AI(query, ctx) {
     query = query.toLowerCase();
 
     if (ctx === 0) {
-        if (query.match(/good/) || query.match(/movie/) || query.match(/movies/) || query.match(/good movie/) || query.match(/tell/) || query.match(/good movies/) || query.match(/watch today/) || query.match(/watch/)) {
+        if (query.match(/good/) || query.match(/suggest/) || query.match(/film/) || query.match(/movie/) || query.match(/tell/) || query.match(/watch/)) {
             return true;
         } else {
             return false;
