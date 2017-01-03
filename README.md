@@ -3,8 +3,9 @@ A facebook movie 🎬 suggesting bot
 
 [See it in action](https://vimeo.com/197744845)
 
-###Status 🚫
-I just submitted the app to facebook for review. Hope they do accept it. Once it's live, publc will be able to message it too! (which is what its made for of course) 
+###Status ✅
+It's public, and ready to suggest you movies!
+[m.me/movie.suggester](m.me/movie.suggester)
 
 ###Where does the movies come from? ☁️
 The movies are added in a array, by hand, but not the metadata of them, Just the names! That is imported from a 3rd party API. The API will be credited.
