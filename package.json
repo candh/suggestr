@@ -1,0 +1,24 @@
+{
+  "name": "messenger-bot",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.2",
+    "colors": "^1.1.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "diskdb": "^0.1.17",
+    "express": "~4.14.0",
+    "install": "^0.8.4",
+    "jade": "~1.11.0",
+    "mongoose": "^4.7.5",
+    "morgan": "~1.7.0",
+    "node-localdb": "0.0.3",
+    "request": "^2.79.0",
+    "serve-favicon": "~2.3.0",
+    "underscore": "^1.8.3"
+  }
+}
