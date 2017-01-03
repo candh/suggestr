@@ -5,7 +5,7 @@ A facebook movie 🎬 suggesting bot
 
 ###Status ✅
 It's public, and ready to suggest you movies!
-[m.me/movie.suggester](m.me/movie.suggester)
+[m.me/movie.suggester](https://m.me/movie.suggester)
 
 ###Where does the movies come from? ☁️
 The movies are added in a array, by hand, but not the metadata of them, Just the names! That is imported from a 3rd party API. The API will be credited.
