@@ -345,7 +345,7 @@ function generateMovie(recipientId, cb) {
                         poster: poster,
                         movie_id: file[rand]['imdbID']
                     };
-                    res[1] = `${name} (${year})\nCountry: ${country}, Director: ${director}, Actors: ${actors}\nIMDB rating: ${imdb_rating}`;
+                    res[1] = `${name} (${year})\nCountry: ${country},\n Director: ${director},\n Actors: ${actors}\nIMDB rating: ${imdb_rating}`;
 
                     movieSchemaSend(res, recipientId);
 
