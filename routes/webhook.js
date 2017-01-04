@@ -376,7 +376,6 @@ function generateMovie(recipientId, cb) {
                 });
             });
         } else {
-            console.log('USER EXISTS / FROM ELSE');
             generateMovieSchema(recipientId, user)
         }
     });
@@ -584,7 +583,7 @@ function callSendAPI(messageData) {
             });
         } else {
             console.error("Unable to send message.");
-            console.error(response);
+            //console.error(response);
             console.error(error);
         }
     });
