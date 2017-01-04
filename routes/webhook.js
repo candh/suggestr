@@ -291,9 +291,10 @@ function sendError(recipientId, ctx) {
 }
 // *********************
 
-
 // ********************* Prepare Movie Data for sending
-function generateMovie(recipientId, cb) {
+
+
+function generateMovieSchema(recipientId, user) {
     var res = [];
 
     // movies data
@@ -303,64 +304,130 @@ function generateMovie(recipientId, cb) {
         file = JSON.parse(file);
         totalMovies = file.length;
     }
+    var flag = true;
+    var suggested_total = user.suggested;
+    var movies_total = user.movies;
+
+
+    while (flag) {
+        rand = getRandomInt(0, file.length - 1);
+        name = file[rand]["Title"];
+        poster = file[rand]["Poster"];
+        country = file[rand]["Country"];
+        lang = file[rand]["Language"];
+        imdb_rating = file[rand]['imdbRating'];
+        imdb_id = file[rand]['imdbID'];
+        year = file[rand]['Year'];
+        director = file[rand]['Director'];
+        actors = file[rand]['Actors'];
+
+        suggested = suggested_total.filter(function(e, i) {
+            if (e == imdb_id) {
+                return e;
+            }
+        });
+
+        movies = movies_total.filter(function(e, i) {
+            if (e == imdb_id) {
+                return e;
+            }
+        });
+
+        if (suggested.length == 0 && movies.length == 0) {
+            flag = false;
+            res[0] = {
+                poster: poster,
+                movie_id: file[rand]['imdbID']
+            };
+            res[1] = `${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}`;
+
+            movieSchemaSend(res, recipientId);
+
+        } else if (suggested.length > 0) {
+            var tur = _.union(suggested_total, movies_total);
+            if (tur.length == totalMovies) {
+                console.log(recipientId, 'has run out of movies');
+                sendMessage(recipientId, "I have suggested you all the good movies I know.\
+                                 I'm so sorry! You can hit the Internet for more but thats I'll have for you.\
+                                 If you wanna go over the movies you skipped, reply with \"reset\"");
+
+                flag = false;
+            }
+        }
+    }
+}
+
+function generateMovie(recipientId, cb) {
+
 
     User.findById(recipientId, function(err, user) {
         if (err) {
             console.log(err);
         } else if (user == null) {
-            console.log('user not found');
+            saveUserToDb(recipientId, function() {
+
+                User.findById(recipientId, function(err, user) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    if (user !== null) {
+                        generateMovieSchema(recipientId, user)
+                    }
+                });
+            });
         } else {
-            var flag = true;
-            var suggested_total = user.suggested;
-            var movies_total = user.movies;
+            generateMovieSchema(recipientId, user)
+                // var flag = true;
+                // var suggested_total = user.suggested;
+                // var movies_total = user.movies;
 
 
-            while (flag) {
-                rand = getRandomInt(0, file.length - 1);
-                name = file[rand]["Title"];
-                poster = file[rand]["Poster"];
-                country = file[rand]["Country"];
-                lang = file[rand]["Language"];
-                imdb_rating = file[rand]['imdbRating'];
-                imdb_id = file[rand]['imdbID'];
-                year = file[rand]['Year'];
-                director = file[rand]['Director'];
-                actors = file[rand]['Actors'];
+            // while (flag) {
+            //     rand = getRandomInt(0, file.length - 1);
+            //     name = file[rand]["Title"];
+            //     poster = file[rand]["Poster"];
+            //     country = file[rand]["Country"];
+            //     lang = file[rand]["Language"];
+            //     imdb_rating = file[rand]['imdbRating'];
+            //     imdb_id = file[rand]['imdbID'];
+            //     year = file[rand]['Year'];
+            //     director = file[rand]['Director'];
+            //     actors = file[rand]['Actors'];
 
-                suggested = suggested_total.filter(function(e, i) {
-                    if (e == imdb_id) {
-                        return e;
-                    }
-                });
+            //     suggested = suggested_total.filter(function(e, i) {
+            //         if (e == imdb_id) {
+            //             return e;
+            //         }
+            //     });
 
-                movies = movies_total.filter(function(e, i) {
-                    if (e == imdb_id) {
-                        return e;
-                    }
-                });
+            //     movies = movies_total.filter(function(e, i) {
+            //         if (e == imdb_id) {
+            //             return e;
+            //         }
+            //     });
 
-                if (suggested.length == 0 && movies.length == 0) {
-                    flag = false;
-                    res[0] = {
-                        poster: poster,
-                        movie_id: file[rand]['imdbID']
-                    };
-                    res[1] = `${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}`;
+            //     if (suggested.length == 0 && movies.length == 0) {
+            //         flag = false;
+            //         res[0] = {
+            //             poster: poster,
+            //             movie_id: file[rand]['imdbID']
+            //         };
+            //         res[1] = `${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}`;
 
-                    movieSchemaSend(res, recipientId);
+            //         movieSchemaSend(res, recipientId);
 
-                } else if (suggested.length > 0) {
-                    var tur = _.union(suggested_total, movies_total);
-                    if (tur.length == totalMovies) {
-                        console.log(recipientId, 'has run out of movies');
-                        sendMessage(recipientId, "I have suggested you all the good movies I know.\
-                                 I'm so sorry! You can hit the Internet for more but thats I'll have for you.\
-                                 If you wanna go over the movies you skipped, reply with \"reset\"");
+            //     } else if (suggested.length > 0) {
+            //         var tur = _.union(suggested_total, movies_total);
+            //         if (tur.length == totalMovies) {
+            //             console.log(recipientId, 'has run out of movies');
+            //             sendMessage(recipientId, "I have suggested you all the good movies I know.\
+            //                      I'm so sorry! You can hit the Internet for more but thats I'll have for you.\
+            //                      If you wanna go over the movies you skipped, reply with \"reset\"");
 
-                        flag = false;
-                    }
-                }
-            }
+            //             flag = false;
+            //         }
+            //     }
+            // }
         }
     });
 
@@ -444,13 +511,16 @@ function saveToSuggested(user, movie, cb) {
     });
 }
 
-function saveUserToDb(user) {
+function saveUserToDb(user, cb) {
     var NewUser = new User({
         _id: user
     });
     NewUser.save(function(err) {
         if (err) console.log((err));
         console.log('USER SAVED');
+        if (cb) {
+            cb();
+        }
     });
 }
 
