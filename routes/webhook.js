@@ -331,6 +331,7 @@ function generateMovieSchema(recipientId, user) {
             if (files.error) {
                 sendMessage(recipientId, 'No movie with this genre found!');
                 flag = false;
+                break;
             }
             rand = getRandomInt(0, file.length - 1);
             name = file[rand]["Title"];
