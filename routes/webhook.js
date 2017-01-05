@@ -398,6 +398,11 @@ function generateMovieSchema(recipientId, user) {
 }
 
 function findByGenre(new_generes) {
+    if (new_generes.length == 0) {
+        return {
+            genre_flag: false
+        }
+    }
     var db = "./db/movies.json";
     var file = fs.readFileSync(db, 'utf8');
     if (file.length > 0) {
@@ -405,17 +410,13 @@ function findByGenre(new_generes) {
         totalMovies = file.length;
     }
     file = file.filter(function(e, i) {
-        if (new_generes.length == 0) {
-            return {
-                genre_flag: false
-            }
-        } else {
-            for (var i = 0; i < new_generes.length; i++) {
-                if (e.Genre.includes(new_generes[i])) {
-                    return true;
-                }
+
+        for (var i = 0; i < new_generes.length; i++) {
+            if (e.Genre.includes(new_generes[i])) {
+                return true;
             }
         }
+
     });
     return {
         genre_flag: true,
