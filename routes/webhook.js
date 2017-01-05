@@ -417,13 +417,21 @@ function findByGenre(new_generes) {
     }
     file = file.filter(function(e, i) {
 
-        for (var i = 0; i < new_generes.length; i++) {
-            if (e.Genre.includes(new_generes[i])) {
-                return true;
-            }
+        genre_orig = e.Genre.split(', ');
+        var cl = _.intersection(genre_orig, new_generes);
+        if (cl.length == new_generes.length) {
+            return true
         }
-
     });
+    // file = file.filter(function(e, i) {
+    //     for (var i = 0; i < new_generes.length; i++) {
+    //         genre
+    //         if (e.Genre.includes(new_generes[i])) {
+    //             return true;
+    //         }
+    //     }
+    //
+    // });
     return {
         genre_flag: true,
         generes: file
@@ -521,6 +529,7 @@ function saveToGenre(user, genre, cb) {
         if (err) {
             console.log(err);
         } else if (user != null) {
+            user.genre = [];
             user.genre = genre;
             user.save(function(err, updatedUser) {
                 if (err) {
