@@ -398,16 +398,17 @@ function generateMovieSchema(recipientId, user) {
 }
 
 function findByGenre(new_generes) {
-    if (new_generes.length == 0) {
-        return {
-            genre_flag: false
-        }
-    }
+
     var db = "./db/movies.json";
     var file = fs.readFileSync(db, 'utf8');
     if (file.length > 0) {
         file = JSON.parse(file);
         totalMovies = file.length;
+    }
+    if (new_generes.length == 0) {
+        return {
+            genre_flag: false
+        }
     }
     file = file.filter(function(e, i) {
 
