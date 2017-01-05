@@ -538,8 +538,8 @@ function movieSchemaSend(res, recipientId) {
 
 }
 
-function saveToGenre(user, genre, cb) {
-    User.findById(user, function(err, user) {
+function saveToGenre(id, genre, cb) {
+    User.findById(id, function(err, user) {
         if (err) {
             console.log(err);
         } else if (user != null) {
@@ -554,7 +554,7 @@ function saveToGenre(user, genre, cb) {
                 }
             })
         } else if (user == null) {
-            saveUserToDb(user, genre);
+            saveUserToDb(id, genre);
         }
     });
 }
