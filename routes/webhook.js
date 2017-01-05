@@ -328,7 +328,10 @@ function generateMovieSchema(recipientId, user) {
         while (flag) {
             files = findByGenre(genre);
             file = files.generes;
-
+            if (file.error) {
+                sendMessage(recipientId, 'No movie with this genre found!');
+                flag = false;
+            }
             rand = getRandomInt(0, file.length - 1);
             name = file[rand]["Title"];
             poster = file[rand]["Poster"];
@@ -423,6 +426,19 @@ function findByGenre(new_generes) {
             return true
         }
     });
+
+    if (file.length > 0) {
+
+        return {
+            genre_flag: true,
+            generes: file
+        };
+
+    } else {
+        return {
+            error: true
+        }
+    }
     // file = file.filter(function(e, i) {
     //     for (var i = 0; i < new_generes.length; i++) {
     //         genre
@@ -432,10 +448,7 @@ function findByGenre(new_generes) {
     //     }
     //
     // });
-    return {
-        genre_flag: true,
-        generes: file
-    };
+
 }
 
 function getGenreForUser(id, cb) {
