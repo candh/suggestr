@@ -407,7 +407,7 @@ function findByGenre(new_generes) {
     }
     if (new_generes.length == 0) {
         return {
-            generes: file
+            generes: file,
             genre_flag: false
         }
     }
