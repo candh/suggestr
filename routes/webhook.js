@@ -363,9 +363,6 @@ function generateMovieSchema(recipientId, user) {
                     movie_id: file[rand]['imdbID']
                 };
                 res[1] = `${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}`;
-                if (files.genre_flag) {
-                    updateGenreCount(recipientId);
-                }
                 console.log(res);
                 movieSchemaSend(res, recipientId);
 
@@ -544,7 +541,6 @@ function resetGenre(id, cb) {
             console.log(err);
         } else if (user !== null) {
             user.genre = [];
-            user.genre_count = 0;
             user.save(function(err, updatedUser) {
                 if (err) {
                     console.log(err)
@@ -556,27 +552,6 @@ function resetGenre(id, cb) {
         }
     });
 
-}
-
-function updateGenreCount(id, cb) {
-    User.findById(id, function(err, user) {
-        if (err) {
-            console.log(err);
-        } else if (user !== null) {
-            if (user.genre_count == undefined) {
-                user.genre_count = 0;
-            }
-            user.genre_count += 1;
-            user.save(function(err, updatedUser) {
-                if (err) {
-                    console.log(err)
-                }
-                if (cb) {
-                    cb();
-                }
-            })
-        }
-    });
 }
 
 function saveToSuggested(user, movie, cb) {
@@ -654,7 +629,7 @@ function resetMovies(recipientId, cb) {
             console.log('User Not found');
         } else {
 
-
+            var genre_count = 0;
             var suggested_total = user.suggested;
             var movies_total = user.movies;
 

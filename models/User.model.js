@@ -8,8 +8,7 @@ var UserSchema = new Schema({
     },
     suggested: Array,
     movies: Array,
-    genre: Array,
-    genre_count: Number
+    genre: Array
 }, {
     _id: false
 })
