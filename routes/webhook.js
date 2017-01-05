@@ -16,6 +16,29 @@ var User = require('../models/User.model');
 mongoose.set('debug', true);
 var _ = require('underscore');
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
+var genres = [
+    'Crime',
+    'Drama',
+    'Action',
+    'Biography',
+    'History',
+    'Adventure',
+    'Fantasy',
+    'Comedy',
+    'Sci-Fi',
+    'Mystery',
+    'Documentary',
+    'Thriller',
+    'War',
+    'Music',
+    'Animation',
+    'Horror',
+    'Western',
+    'Family',
+    'Romance',
+    'Sport',
+    'Film-Noir'
+];
 // *********^
 function typingOn(recipientId) {
     var data = {
@@ -23,11 +46,9 @@ function typingOn(recipientId) {
             id: recipientId
         },
         sender_action: "typing_on"
-    }
-
-
+    };
     request({
-        uri: `https://graph.facebook.com/v2.6/me/messages`,
+        uri: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
             access_token: PAGE_ACCESS_TOKEN
         },
@@ -53,11 +74,11 @@ function typingOff(recipientId) {
             id: recipientId
         },
         sender_action: "typing_off"
-    }
+    };
 
 
     request({
-        uri: `https://graph.facebook.com/v2.6/me/messages`,
+        uri: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
             access_token: PAGE_ACCESS_TOKEN
         },
@@ -139,7 +160,7 @@ function sendGreeting() {
         greeting: {
             text: "Hi {{user_first_name}}, I'm a movie suggesting bot! Type Hi to get started!"
         }
-    }
+    };
 
     request({
         uri: 'https://graph.facebook.com/v2.6/me/thread_settings',
@@ -220,7 +241,9 @@ function receivedMessage(event) {
     if (messageText) {
         console.log('\n\n\n messsage recieved \n\n\n', event.message);
         //sendMessage(senderID, messageText);
-
+        if (messageText == "dev") {
+            sendGenres(senderID);
+        }
         if (AI(messageText, 0)) {
             // then user asked for a movie
             typingOn(senderID);
@@ -292,7 +315,24 @@ function sendError(recipientId, ctx) {
 // *********************
 
 // ********************* Prepare Movie Data for sending
-
+function sendGenres(recipientId) {
+    message = {
+        recipientId: {
+            id: recipientId
+        },
+        quick_replies: []
+    };
+    genres.forEach(function(e, i) {
+        var data = {
+            "content_type": "text",
+            "title": e,
+            "payload": `genre: ${e}`
+        };
+        message.quick_replies.push(data);
+    });
+    callSendAPI(message);
+    console.log('genres sent / SEND GENRES()')
+}
 
 function generateMovieSchema(recipientId, user) {
     var res = [];
