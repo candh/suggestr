@@ -15,32 +15,11 @@ var mongoose = require('mongoose');
 var User = require('../models/User.model');
 mongoose.set('debug', true);
 var _ = require('underscore');
+var genr = require('../tools/genre.js');
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
-var genres = [
-    'Crime',
-    'Drama',
-    'Action',
-    'Biography',
-    'History',
-    'Adventure',
-    'Fantasy',
-    'Comedy',
-    'Sci-Fi',
-    'Mystery',
-    'Documentary',
-    'Thriller',
-    'War',
-    'Music',
-    'Animation',
-    'Horror',
-    'Western',
-    'Family',
-    'Romance',
-    'Sport',
-    'Film-Noir'
-];
+
 // *********^
-function typingOn(recipientId) {
+function typingOn(recipientId, cb) {
     var data = {
         recipient: {
             id: recipientId
@@ -59,6 +38,9 @@ function typingOn(recipientId) {
         if (!error && response.statusCode == 200) {
             var recipientId = body.recipient_id;
             var messageId = body.message_id;
+            if (cb) {
+                cb();
+            }
         } else {
             console.error("Unable to send typing_on");
             // console.error(response);
@@ -67,7 +49,7 @@ function typingOn(recipientId) {
     });
 }
 
-function typingOff(recipientId) {
+function typingOff(recipientId, cb) {
 
     var data = {
         recipient: {
@@ -89,6 +71,9 @@ function typingOff(recipientId) {
         if (!error && response.statusCode == 200) {
             var recipientId = body.recipient_id;
             var messageId = body.message_id;
+            if (cb) {
+                cb();
+            }
         } else {
             console.error("Unable to send typing_on");
             // console.error(response);
@@ -215,9 +200,12 @@ function payloadHandler(event) {
                 generateMovie(user_id);
                 break;
             case "I'll watch":
-                typingOn(user_id);
-                writeUserMovie(user_id, movie_id, function() {
-                    sendMessage(user_id, "Okay! That's great. Have a good one! I'll remember this!");
+                resetGenre(user_id, function() {
+                    typingOn(user_id);
+                    writeUserMovie(user_id, movie_id, function() {
+                        sendMessage(user_id, "Okay! That's great. Have a good one! I'll remember this!");
+                    });
+
                 });
                 break;
         }
@@ -242,13 +230,13 @@ function receivedMessage(event) {
         console.log('\n\n\n messsage recieved \n\n\n', event.message);
         //sendMessage(senderID, messageText);
         if (messageText == "dev") {
-            sendGenres(senderID);
-            return;
+
         }
-        if (AI(messageText, 0)) {
+        if (AI(messageText, 0, senderID) === undefined) {
             // then user asked for a movie
             typingOn(senderID);
-            generateMovie(senderID);
+            console.log(undefined);
+
             // dev
             //sendGenericMessage(senderID);
             // sendMessage(senderID, "sorry we're working on the bot");
@@ -256,31 +244,42 @@ function receivedMessage(event) {
             resetMovies(senderID);
         } else if (AI(messageText, 1)) {
             // send a small text. Like just a chat!
-            typingOn(senderID);
-            sendMessage(senderID, AI(messageText, 1));
+            typingOn(senderID, function() {
+                sendMessage(senderID, AI(messageText, 1));
+            });
+
         } else {
             // we don't recognize what the user said
             sendError(senderID, 0);
         }
-
-
-
         process.stdout.write(JSON.stringify(message));
-
-
     }
 }
 
-
 // *************** AI
-function AI(query, ctx) {
+function AI(query, ctx, senderID) {
     // 0 - INTENT - Suggest a movie
     // 1 - INTENT - General
     query = query.toLowerCase();
-
+    query = query.replace(/[^a-zA-Z]/g, "");
     if (ctx === 0) {
         if (query.match(/good/) || query.match(/suggest/) || query.match(/film/) || query.match(/movie/) || query.match(/tell/) || query.match(/watch/)) {
-            return true;
+            // genre check
+            genr(function(genres) {
+                console.log(genres);
+                new_genres = genres.filter(function(e, i) {
+                    e = e.replace(/[^a-zA-Z]/g, "");
+                    e = e.toLowerCase();
+                    if (query.match(e)) {
+                        return true;
+                    }
+                });
+                saveToGenre(senderID, new_genres, function() {
+                    generateMovie(senderID);
+                })
+            });
+
+
         } else {
             return false;
         }
@@ -315,98 +314,128 @@ function sendError(recipientId, ctx) {
 }
 // *********************
 
-// ********************* Prepare Movie Data for sending
-sendGenres('123')
-
-function sendGenres(recipientId) {
-    messageData = {
-        recipient: {
-            id: recipientId
-        },
-        message: {
-            quick_replies: []
-        }
-    };
-    genres.forEach(function(e, i) {
-        var data = {
-            "content_type": "text",
-            "title": e,
-            "payload": `genre: ${e}`
-        };
-        messageData.message.quick_replies.push(data);
-        if (messageData.message.quick_replies.length == genres.length) {
-            callSendAPI(messageData);
-            console.log('genres sent / SEND GENRES()');
-        }
-    });
-}
+// **************************
+// prepare movie for sending
 
 function generateMovieSchema(recipientId, user) {
     var res = [];
+    var flag = true;
 
-    // movies data
+    var suggested_total = user.suggested;
+    var movies_total = user.movies;
+    var genre_count = user.genre_count;
+    getGenreForUser(recipientId, function(genre) {
+        while (flag) {
+            files = findByGenre(genre);
+            file = files.generes;
+
+            rand = getRandomInt(0, file.length - 1);
+            name = file[rand]["Title"];
+            poster = file[rand]["Poster"];
+            country = file[rand]["Country"];
+            lang = file[rand]["Language"];
+            imdb_rating = file[rand]['imdbRating'];
+            imdb_id = file[rand]['imdbID'];
+            year = file[rand]['Year'];
+            director = file[rand]['Director'];
+            actors = file[rand]['Actors'];
+
+            suggested = suggested_total.filter(function(e, i) {
+                if (e == imdb_id) {
+                    return e;
+                }
+            });
+            movies = movies_total.filter(function(e, i) {
+                if (e == imdb_id) {
+                    return e;
+                }
+            });
+
+            if (files.genre_flag == true) {
+                totalMovies = files.generes.length;
+                console.log('we here');
+            }
+
+            if (suggested.length == 0 && movies.length == 0) {
+                flag = false;
+                res[0] = {
+                    poster: poster,
+                    movie_id: file[rand]['imdbID']
+                };
+                res[1] = `${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}`;
+                if (files.genre_flag) {
+                    updateGenreCount(recipientId);
+                }
+                console.log(res);
+                movieSchemaSend(res, recipientId);
+
+            } else if (suggested.length > 0) {
+                if (files.genre_flag) {
+                    if (genre_count == file.length) {
+                        console.log('here');
+                        sendMessage(recipientId, "I already have suggested all the movies for this genre. Try another genre or no genre at all to see all the movies. If you wanna go over them again, reply with \"reset\"");
+                        flag = false;
+                    }
+
+                } else if (iles.genre_flag == false) {
+                    var tur = _.union(suggested_total, movies_total);
+                    if (tur.length == totalMovies) {
+
+                        console.log(recipientId, 'has run out of movies');
+                        sendMessage(recipientId, "I have suggested you all the good movies I know.\
+                                       I'm so sorry! You can hit the Internet for more but thats I'll have for you.\
+                                       If you wanna go over the movies you skipped, reply with \"reset\"");
+
+                        flag = false;
+                    }
+                }
+            }
+        }
+
+
+    });
+
+}
+
+function findByGenre(new_generes) {
     var db = "./db/movies.json";
     var file = fs.readFileSync(db, 'utf8');
     if (file.length > 0) {
         file = JSON.parse(file);
         totalMovies = file.length;
     }
-    var flag = true;
-    var suggested_total = user.suggested;
-    var movies_total = user.movies;
-
-
-    while (flag) {
-        rand = getRandomInt(0, file.length - 1);
-        name = file[rand]["Title"];
-        poster = file[rand]["Poster"];
-        country = file[rand]["Country"];
-        lang = file[rand]["Language"];
-        imdb_rating = file[rand]['imdbRating'];
-        imdb_id = file[rand]['imdbID'];
-        year = file[rand]['Year'];
-        director = file[rand]['Director'];
-        actors = file[rand]['Actors'];
-
-        suggested = suggested_total.filter(function(e, i) {
-            if (e == imdb_id) {
-                return e;
+    file = file.filter(function(e, i) {
+        if (new_generes.length == 0) {
+            return {
+                genre_flag: false
             }
-        });
-
-        movies = movies_total.filter(function(e, i) {
-            if (e == imdb_id) {
-                return e;
-            }
-        });
-
-        if (suggested.length == 0 && movies.length == 0) {
-            flag = false;
-            res[0] = {
-                poster: poster,
-                movie_id: file[rand]['imdbID']
-            };
-            res[1] = `${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}`;
-
-            movieSchemaSend(res, recipientId);
-
-        } else if (suggested.length > 0) {
-            var tur = _.union(suggested_total, movies_total);
-            if (tur.length == totalMovies) {
-                console.log(recipientId, 'has run out of movies');
-                sendMessage(recipientId, "I have suggested you all the good movies I know.\
-                                 I'm so sorry! You can hit the Internet for more but thats I'll have for you.\
-                                 If you wanna go over the movies you skipped, reply with \"reset\"");
-
-                flag = false;
+        } else {
+            for (var i = 0; i < new_generes.length; i++) {
+                if (e.Genre.includes(new_generes[i])) {
+                    return true;
+                }
             }
         }
-    }
+    });
+    return {
+        genre_flag: true,
+        generes: file
+    };
+}
+
+function getGenreForUser(id, cb) {
+    User.findById(id, function(err, user) {
+        if (err) {
+            console.log(err);
+        } else if (user !== null) {
+            if (cb) {
+                cb(user.genre)
+            }
+        }
+    });
 }
 
 function generateMovie(recipientId, cb) {
-
-
     User.findById(recipientId, function(err, user) {
         if (err) {
             console.log(err);
@@ -430,8 +459,6 @@ function generateMovie(recipientId, cb) {
 }
 
 function movieSchemaSend(res, recipientId) {
-
-
     res.forEach(function(e, i) {
         var messageData;
         if (i === 0) {
@@ -482,6 +509,66 @@ function movieSchemaSend(res, recipientId) {
 
 }
 
+function saveToGenre(user, genre, cb) {
+    User.findById(user, function(err, user) {
+        if (err) {
+            console.log(err);
+        } else if (user != null) {
+            user.genre = genre;
+            user.save(function(err, updatedUser) {
+                if (err) {
+                    console.log(err)
+                }
+                if (cb) {
+                    cb();
+                }
+            })
+        }
+    });
+}
+
+function resetGenre(id, cb) {
+
+    User.findById(id, function(err, user) {
+        if (err) {
+            console.log(err);
+        } else if (user !== null) {
+            user.genre = [];
+            user.genre_count = 0;
+            user.save(function(err, updatedUser) {
+                if (err) {
+                    console.log(err)
+                }
+                if (cb) {
+                    cb();
+                }
+            })
+        }
+    });
+
+}
+
+function updateGenreCount(id, cb) {
+    User.findById(id, function(err, user) {
+        if (err) {
+            console.log(err);
+        } else if (user !== null) {
+            if (user.genre_count == undefined) {
+                user.genre_count = 0;
+            }
+            user.genre_count += 1;
+            user.save(function(err, updatedUser) {
+                if (err) {
+                    console.log(err)
+                }
+                if (cb) {
+                    cb();
+                }
+            })
+        }
+    });
+}
+
 function saveToSuggested(user, movie, cb) {
     User.findById(user, function(err, user) {
         if (err) {
@@ -509,7 +596,8 @@ function saveToSuggested(user, movie, cb) {
 
 function saveUserToDb(user, cb) {
     var NewUser = new User({
-        _id: user
+        _id: user,
+        genre_count: 0
     });
     NewUser.save(function(err) {
         if (err) console.log((err));
@@ -564,7 +652,6 @@ function resetMovies(recipientId, cb) {
             var ai = _.difference(suggested_total, movies_total);
 
 
-
             if (ai.length === 0) {
                 sendMessage(recipientId, "You've watched all the movies that I have in my database. Maybe it's time to go out!");
 
@@ -590,16 +677,17 @@ function resetMovies(recipientId, cb) {
 // ******************** API functions
 
 function sendMessage(recipientId, message) {
-    typingOff(recipientId);
-    var messageData = {
-        recipient: {
-            id: recipientId
-        },
-        message: {
-            text: message
-        }
-    };
-    callSendAPI(messageData);
+    typingOff(recipientId, function() {
+        var messageData = {
+            recipient: {
+                id: recipientId
+            },
+            message: {
+                text: message
+            }
+        };
+        callSendAPI(messageData);
+    });
 }
 
 function callSendAPI(messageData) {
