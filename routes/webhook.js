@@ -373,7 +373,7 @@ function generateMovieSchema(recipientId, user) {
                 if (files.genre_flag) {
 
                     var cl = file.filter(function(e, i) {
-                        if (_.contains(suggested_total, e)) {
+                        if (_.contains(suggested_total, e.imdbID)) {
                             return true;
                         }
                     })
