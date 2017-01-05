@@ -318,7 +318,7 @@ function sendError(recipientId, ctx) {
 // ********************* Prepare Movie Data for sending
 function sendGenres(recipientId) {
     message = {
-        recipientId: {
+        recipient: {
             id: recipientId
         },
         quick_replies: []
