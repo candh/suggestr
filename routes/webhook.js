@@ -553,6 +553,8 @@ function saveToGenre(user, genre, cb) {
                     cb();
                 }
             })
+        } else if (user == null) {
+            saveUserToDb(user, genre);
         }
     });
 }
@@ -602,11 +604,18 @@ function saveToSuggested(user, movie, cb) {
     });
 }
 
-function saveUserToDb(user, cb) {
+function saveUserToDb(user, genre, cb) {
     var NewUser = new User({
-        _id: user,
-        genre_count: 0
+        _id: user
     });
+
+    if (typeof genre == "object") {
+        var NewUser = new User({
+            _id: user,
+            genre = genre
+        });
+    }
+
     NewUser.save(function(err) {
         if (err) console.log((err));
         console.log('USER SAVED');
