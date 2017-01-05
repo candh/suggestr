@@ -371,7 +371,14 @@ function generateMovieSchema(recipientId, user) {
 
             } else if (suggested.length > 0) {
                 if (files.genre_flag) {
-                    if (genre_count == file.length) {
+
+                    var cl = file.filter(function(e, i) {
+                        if (_.contains(suggested_total, e)) {
+                            return true;
+                        }
+                    })
+
+                    if (cl.length == file.length) {
                         console.log('here');
                         sendMessage(recipientId, "I already have suggested all the movies for this genre. Try another genre or no genre at all to see all the movies. If you wanna go over them again, reply with \"reset\"");
                         flag = false;
