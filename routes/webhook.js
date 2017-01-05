@@ -612,7 +612,7 @@ function saveUserToDb(user, genres, cb) {
     if (typeof genres == "object") {
         var NewUser = new User({
             _id: user,
-            genre = genres
+            genre: genres
         });
     }
 
