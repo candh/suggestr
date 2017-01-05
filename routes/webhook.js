@@ -243,6 +243,7 @@ function receivedMessage(event) {
         //sendMessage(senderID, messageText);
         if (messageText == "dev") {
             sendGenres(senderID);
+            return;
         }
         if (AI(messageText, 0)) {
             // then user asked for a movie
@@ -331,7 +332,7 @@ function sendGenres(recipientId) {
         message.quick_replies.push(data);
     });
     callSendAPI(message);
-    console.log('genres sent / SEND GENRES()')
+    console.log('genres sent / SEND GENRES()');
 }
 
 function generateMovieSchema(recipientId, user) {
