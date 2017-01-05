@@ -604,15 +604,15 @@ function saveToSuggested(user, movie, cb) {
     });
 }
 
-function saveUserToDb(user, genre, cb) {
+function saveUserToDb(user, genres, cb) {
     var NewUser = new User({
         _id: user
     });
 
-    if (typeof genre == "object") {
+    if (typeof genres == "object") {
         var NewUser = new User({
             _id: user,
-            genre = genre
+            genre = genres
         });
     }
 
