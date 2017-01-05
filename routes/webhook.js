@@ -377,7 +377,7 @@ function generateMovieSchema(recipientId, user) {
                         flag = false;
                     }
 
-                } else if (iles.genre_flag == false) {
+                } else if (files.genre_flag == false) {
                     var tur = _.union(suggested_total, movies_total);
                     if (tur.length == totalMovies) {
 
