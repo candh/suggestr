@@ -114,13 +114,13 @@ router.post('/', function(req, res) {
             // Iterate over each messaging event
             entry.messaging.forEach(function(event) {
                 if (event.message) {
-                    // if (event.message.quick_reply) {
-                    //     payloadHandler(event);
-                    // } else {
-                    //     receivedMessage(event);
-                    // }
+                    if (event.message.quick_reply) {
+                        payloadHandler(event);
+                    } else {
+                        receivedMessage(event);
+                    }
 
-                    receivedMessage(event);
+                    //receivedMessage(event);
 
 
                 } else {
@@ -230,29 +230,29 @@ function receivedMessage(event) {
         console.log('\n\n\n messsage recieved \n\n\n', event.message);
 
 
-        sendMessage(senderID, messageText);
-        //
-        // if (AI(messageText, 0, senderID) === undefined) {
-        //     // then user asked for a movie
-        //     typingOn(senderID);
-        //     console.log(undefined);
-        //
-        //     // dev
-        //     //sendGenericMessage(senderID);
-        //     // sendMessage(senderID, "sorry we're working on the bot");
-        // } else if (messageText.toLowerCase() == 'reset') {
-        //     resetMovies(senderID);
-        // } else if (AI(messageText, 1)) {
-        //     // send a small text. Like just a chat!
-        //     typingOn(senderID, function() {
-        //         sendMessage(senderID, AI(messageText, 1));
-        //     });
-        //
-        // } else {
-        //     // we don't recognize what the user said
-        //     sendError(senderID, 0);
-        // }
-        // process.stdout.write(JSON.stringify(message));
+        //sendMessage(senderID, messageText);
+
+        if (AI(messageText, 0, senderID) === undefined) {
+            // then user asked for a movie
+            typingOn(senderID);
+            console.log(undefined);
+
+            // dev
+            //sendGenericMessage(senderID);
+            // sendMessage(senderID, "sorry we're working on the bot");
+        } else if (messageText.toLowerCase() == 'reset') {
+            resetMovies(senderID);
+        } else if (AI(messageText, 1)) {
+            // send a small text. Like just a chat!
+            typingOn(senderID, function() {
+                sendMessage(senderID, AI(messageText, 1));
+            });
+
+        } else {
+            // we don't recognize what the user said
+            sendError(senderID, 0);
+        }
+        process.stdout.write(JSON.stringify(message));
     }
 }
 
