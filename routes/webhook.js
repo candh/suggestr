@@ -316,12 +316,16 @@ function sendError(recipientId, ctx) {
 // *********************
 
 // ********************* Prepare Movie Data for sending
+sendGenres('123')
+
 function sendGenres(recipientId) {
-    message = {
+    messageData = {
         recipient: {
             id: recipientId
         },
-        quick_replies: []
+        message: {
+            quick_replies: []
+        }
     };
     genres.forEach(function(e, i) {
         var data = {
@@ -329,10 +333,9 @@ function sendGenres(recipientId) {
             "title": e,
             "payload": `genre: ${e}`
         };
-        message.quick_replies.push(data);
-        if (message.quick_replies.length == genres.length) {
-            //callSendAPI(message);
-            console.log(message);
+        messageData.message.quick_replies.push(data);
+        if (messageData.message.quick_replies.length == genres.length) {
+            callSendAPI(messageData);
             console.log('genres sent / SEND GENRES()');
         }
     });
