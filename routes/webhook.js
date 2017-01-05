@@ -328,7 +328,7 @@ function generateMovieSchema(recipientId, user) {
         while (flag) {
             files = findByGenre(genre);
             file = files.generes;
-            if (file.error) {
+            if (files.error) {
                 sendMessage(recipientId, 'No movie with this genre found!');
                 flag = false;
             }
