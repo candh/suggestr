@@ -330,9 +330,12 @@ function sendGenres(recipientId) {
             "payload": `genre: ${e}`
         };
         message.quick_replies.push(data);
+        if (message.quick_replies.length == genres.length) {
+            //callSendAPI(message);
+            console.log(message);
+            console.log('genres sent / SEND GENRES()');
+        }
     });
-    callSendAPI(message);
-    console.log('genres sent / SEND GENRES()');
 }
 
 function generateMovieSchema(recipientId, user) {
