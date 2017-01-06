@@ -190,22 +190,24 @@ function payloadHandler(event) {
 
         switch (messageText) {
             case "Seen it":
-                typingOn(user_id);
-                writeUserMovie(user_id, movie_id, function() {
-                    generateMovie(user_id);
+                typingOn(user_id, function() {
+                    writeUserMovie(user_id, movie_id, function() {
+                        generateMovie(user_id);
+                    });
                 });
                 break;
             case "Another One":
-                typingOn(user_id);
-                generateMovie(user_id);
+                typingOn(user_id, function() {
+                    generateMovie(user_id);
+                });
                 break;
             case "I'll watch":
                 resetGenre(user_id, function() {
-                    typingOn(user_id);
-                    writeUserMovie(user_id, movie_id, function() {
-                        sendMessage(user_id, "Okay! That's great. Have a good one! I'll remember this!");
+                    typingOn(user_id, function() {
+                        writeUserMovie(user_id, movie_id, function() {
+                            sendMessage(user_id, "Okay! That's great. Have a good one! I'll remember this!");
+                        });
                     });
-
                 });
                 break;
         }
