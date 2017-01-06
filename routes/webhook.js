@@ -235,8 +235,6 @@ function receivedMessage(event) {
         if (AI(messageText, 0, senderID) === undefined) {
             // then user asked for a movie
             typingOn(senderID);
-            console.log(undefined);
-
             // dev
             //sendGenericMessage(senderID);
             // sendMessage(senderID, "sorry we're working on the bot");
@@ -683,7 +681,7 @@ function resetMovies(recipientId, cb) {
                     if (err) {
                         console.log(err);
                     }
-                    sendMessage(recipientId, "Ask me for movies so we can go over the movies that you skipped");
+                    sendMessage(recipientId, "Ask me for movies again so we can go over the movies that you skipped");
                     if (cb) {
                         cb(user);
                     }
