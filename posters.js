@@ -3,7 +3,6 @@ var fs = require('fs');
 var request = require('request');
 var movie_list = require('./tools/movie-list.js');
 var file = "./db/movies.json";
-var i = 0;
 
 file = fs.readFile(file, 'utf8', function(err, data) {
     if (err) {
@@ -12,9 +11,7 @@ file = fs.readFile(file, 'utf8', function(err, data) {
 
     data = JSON.parse(data);
     data.forEach(function(e, i) {
-        download(e.Poster, `./posters/poster ${i}.png`, function() {
-        });
-        i++;
+        download(e.Poster, `./posters/poster ${i}.png`, function() {});
     })
 
 })
