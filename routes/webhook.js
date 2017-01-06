@@ -554,10 +554,13 @@ function saveToGenre(id, genre, cb) {
                 }
             })
         } else if (user == null) {
-            saveUserToDb(id, genre);
-            if (cb) {
-                cb();
-            }
+            saveUserToDb(id, genre, function() {
+
+                if (cb) {
+                    cb();
+                }
+            });
+
         }
     });
 }
