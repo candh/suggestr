@@ -172,7 +172,6 @@ function sendGreeting() {
 sendGreeting();
 
 function payloadHandler(event) {
-    console.log('before if');
     var payload = event.message.quick_reply.payload;
     var senderID = event.sender.id;
     var messageText = event.message.text;
@@ -276,7 +275,7 @@ function AI(query, ctx, senderID) {
                 });
                 saveToGenre(senderID, new_genres, function() {
                     generateMovie(senderID);
-                })
+                });
             });
 
 
@@ -354,7 +353,7 @@ function generateMovieSchema(recipientId, user) {
     getGenreForUser(recipientId, function(genre) {
         while (flag) {
             files = findByGenre(genre);
-            file = files.generes;
+            file = files.genres;
             if (files.error) {
                 sendMessage(recipientId, 'No movie with this genre found!');
                 flag = false;
@@ -376,7 +375,7 @@ function generateMovieSchema(recipientId, user) {
             movies = movies_T(movies_total);
 
             if (files.genre_flag) {
-                totalMovies = files.generes.length;
+                totalMovies = files.genres.length;
                 console.log('we here');
             }
 
@@ -421,7 +420,7 @@ function generateMovieSchema(recipientId, user) {
 
 }
 
-function findByGenre(new_generes) {
+function findByGenre(new_genres) {
 
     var db = "./db/movies.json";
     var file = fs.readFileSync(db, 'utf8');
@@ -429,17 +428,17 @@ function findByGenre(new_generes) {
         file = JSON.parse(file);
         totalMovies = file.length;
     }
-    if (new_generes.length === 0) {
+    if (new_genres.length === 0) {
         return {
-            generes: file,
+            genres: file,
             genre_flag: false
         };
     }
     file = file.filter(function(e, i) {
 
         genre_orig = e.Genre.split(', ');
-        var cl = _.intersection(genre_orig, new_generes);
-        if (cl.length == new_generes.length) {
+        var cl = _.intersection(genre_orig, new_genres);
+        if (cl.length == new_genres.length) {
             return true;
         }
     });
@@ -448,7 +447,7 @@ function findByGenre(new_generes) {
 
         return {
             genre_flag: true,
-            generes: file
+            genres: file
         };
 
     } else {
