@@ -334,7 +334,7 @@ function movies_T(movies_total) {
     return movies_total;
 }
 
-function cnt(file) {
+function cnt(file, suggested_total) {
     file = file.filter(function(e, i) {
         if (_.contains(suggested_total, e.imdbID)) {
             return true;
@@ -392,7 +392,7 @@ function generateMovieSchema(recipientId, user) {
             } else if (suggested.length > 0) {
                 if (files.genre_flag) {
 
-                    var cl = cnt(file);
+                    var cl = cnt(file, suggested_total);
 
                     if (cl.length == file.length) {
                         console.log('here');
