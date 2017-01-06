@@ -676,8 +676,7 @@ function resetMovies(recipientId, cb) {
 
 
             if (ai.length === 0) {
-                sendMessage(recipientId, "You've watched all the movies that I have in my database. Maybe it's time to go out!");
-
+                sendMessage(recipientId, "No movies have been found that you've not watched.");
             } else {
                 user.suggested = cl;
                 user.save(function(err, updatedUser) {
