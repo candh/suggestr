@@ -20,7 +20,7 @@ module.exports = function(callback) {
                     genres.push(e);
                 });
             } else {
-                genres.push(cl);
+                genres.push(e);
             }
         });
         genres = genres.filter(function(e, i, arr) {
