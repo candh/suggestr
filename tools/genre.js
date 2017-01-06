@@ -1,6 +1,5 @@
 // this file generates all the genres that are in the movie list
 
-
 module.exports = function(callback) {
     var fs = require('fs');
     var async = require('async');

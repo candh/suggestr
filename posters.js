@@ -12,9 +12,9 @@ file = fs.readFile(file, 'utf8', function(err, data) {
     data = JSON.parse(data);
     data.forEach(function(e, i) {
         download(e.Poster, `./posters/poster ${i}.png`, function() {});
-    })
+    });
 
-})
+});
 
 var download = function(uri, filename, callback) {
     request.head(uri, function(err, res, body) {

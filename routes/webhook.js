@@ -315,6 +315,33 @@ function sendError(recipientId, ctx) {
 // **************************
 // prepare movie for sending
 
+function suggested_T(suggested_total) {
+    suggested_total = suggested_total.filter(function(e, i) {
+        if (e == imdb_id) {
+            return e;
+        }
+    });
+    return suggested_total;
+}
+
+function movies_T(movies_total) {
+    movies_total = movies_total.filter(function(e, i) {
+        if (e == imdb_id) {
+            return e;
+        }
+    });
+    return movies_total;
+}
+
+function cnt(file) {
+    file = file.filter(function(e, i) {
+        if (_.contains(suggested_total, e.imdbID)) {
+            return true;
+        }
+    });
+    return file;
+}
+
 function generateMovieSchema(recipientId, user) {
     var res = [];
     var flag = true;
@@ -342,23 +369,16 @@ function generateMovieSchema(recipientId, user) {
             director = file[rand]['Director'];
             actors = file[rand]['Actors'];
 
-            suggested = suggested_total.filter(function(e, i) {
-                if (e == imdb_id) {
-                    return e;
-                }
-            });
-            movies = movies_total.filter(function(e, i) {
-                if (e == imdb_id) {
-                    return e;
-                }
-            });
+            // no funcitons inside a loop - increasing perfomance!
+            suggested = suggested_T(suggested_total);
+            movies = movies_T(movies_total);
 
-            if (files.genre_flag == true) {
+            if (files.genre_flag) {
                 totalMovies = files.generes.length;
                 console.log('we here');
             }
 
-            if (suggested.length == 0 && movies.length == 0) {
+            if (suggested.length === 0 && movies.length === 0) {
                 flag = false;
                 res[0] = {
                     poster: poster,
@@ -371,11 +391,7 @@ function generateMovieSchema(recipientId, user) {
             } else if (suggested.length > 0) {
                 if (files.genre_flag) {
 
-                    var cl = file.filter(function(e, i) {
-                        if (_.contains(suggested_total, e.imdbID)) {
-                            return true;
-                        }
-                    })
+                    var cl = cnt(file);
 
                     if (cl.length == file.length) {
                         console.log('here');
@@ -383,12 +399,12 @@ function generateMovieSchema(recipientId, user) {
                         flag = false;
                     }
 
-                } else if (files.genre_flag == false) {
+                } else if (files.genre_flag === false) {
                     var tur = _.union(suggested_total, movies_total);
                     if (tur.length == totalMovies) {
 
                         console.log(recipientId, 'has run out of movies');
-                        sendMessage(recipientId, "I have suggested you all the good movies I know.\
+                        sendMessage(recipientId, "I have suggested you all the good movies I know. \
                                        I'm so sorry! You can hit the Internet for more but thats I'll have for you.\
                                        If you wanna go over the movies you skipped, reply with \"reset\"");
 
@@ -411,18 +427,18 @@ function findByGenre(new_generes) {
         file = JSON.parse(file);
         totalMovies = file.length;
     }
-    if (new_generes.length == 0) {
+    if (new_generes.length === 0) {
         return {
             generes: file,
             genre_flag: false
-        }
+        };
     }
     file = file.filter(function(e, i) {
 
         genre_orig = e.Genre.split(', ');
         var cl = _.intersection(genre_orig, new_generes);
         if (cl.length == new_generes.length) {
-            return true
+            return true;
         }
     });
 
@@ -436,18 +452,8 @@ function findByGenre(new_generes) {
     } else {
         return {
             error: true
-        }
+        };
     }
-    // file = file.filter(function(e, i) {
-    //     for (var i = 0; i < new_generes.length; i++) {
-    //         genre
-    //         if (e.Genre.includes(new_generes[i])) {
-    //             return true;
-    //         }
-    //     }
-    //
-    // });
-
 }
 
 function getGenreForUser(id, cb) {
@@ -456,7 +462,7 @@ function getGenreForUser(id, cb) {
             console.log(err);
         } else if (user !== null) {
             if (cb) {
-                cb(user.genre)
+                cb(user.genre);
             }
         }
     });
@@ -466,7 +472,7 @@ function generateMovie(recipientId, cb) {
     User.findById(recipientId, function(err, user) {
         if (err) {
             console.log(err);
-        } else if (user == null) {
+        } else if (user === null) {
             saveUserToDb(recipientId, function() {
 
                 User.findById(recipientId, function(err, user) {
@@ -474,12 +480,12 @@ function generateMovie(recipientId, cb) {
                         console.log(err);
                     }
                     if (user !== null) {
-                        generateMovieSchema(recipientId, user)
+                        generateMovieSchema(recipientId, user);
                     }
                 });
             });
         } else {
-            generateMovieSchema(recipientId, user)
+            generateMovieSchema(recipientId, user);
         }
     });
 
@@ -540,18 +546,18 @@ function saveToGenre(id, genre, cb) {
     User.findById(id, function(err, user) {
         if (err) {
             console.log(err);
-        } else if (user != null) {
+        } else if (user !== null) {
             user.genre = [];
             user.genre = genre;
             user.save(function(err, updatedUser) {
                 if (err) {
-                    console.log(err)
+                    console.log(err);
                 }
                 if (cb) {
                     cb();
                 }
-            })
-        } else if (user == null) {
+            });
+        } else if (user === null) {
             saveUserToDb(id, genre, function() {
 
                 if (cb) {
@@ -572,12 +578,12 @@ function resetGenre(id, cb) {
             user.genre = [];
             user.save(function(err, updatedUser) {
                 if (err) {
-                    console.log(err)
+                    console.log(err);
                 }
                 if (cb) {
                     cb();
                 }
-            })
+            });
         }
     });
 
@@ -614,7 +620,7 @@ function saveUserToDb(user, genres, cb) {
     });
 
     if (typeof genres == "object") {
-        var NewUser = new User({
+        NewUser = new User({
             _id: user,
             genre: genres
         });
