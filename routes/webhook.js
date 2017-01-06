@@ -369,6 +369,7 @@ function generateMovieSchema(recipientId, user) {
             year = file[rand]['Year'];
             director = file[rand]['Director'];
             actors = file[rand]['Actors'];
+            plot = file[rand].Plot;
 
             // no funcitons inside a loop - increasing perfomance!
             suggested = suggested_T(suggested_total);
@@ -385,7 +386,7 @@ function generateMovieSchema(recipientId, user) {
                     poster: poster,
                     movie_id: file[rand]['imdbID']
                 };
-                res[1] = `${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}`;
+                res[1] = `🎬 ${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}\nPlot: ${plot}`;
                 console.log(res);
                 movieSchemaSend(res, recipientId);
 
