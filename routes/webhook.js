@@ -360,15 +360,15 @@ function generateMovieSchema(recipientId, user) {
                 break;
             }
             rand = getRandomInt(0, file.length - 1);
-            name = file[rand]["Title"];
-            poster = file[rand]["Poster"];
-            country = file[rand]["Country"];
-            lang = file[rand]["Language"];
-            imdb_rating = file[rand]['imdbRating'];
-            imdb_id = file[rand]['imdbID'];
-            year = file[rand]['Year'];
-            director = file[rand]['Director'];
-            actors = file[rand]['Actors'];
+            name = file[rand].Title;
+            poster = file[rand].Poster;
+            country = file[rand].Country;
+            lang = file[rand].Language;
+            imdb_rating = file[rand].imdbRating;
+            imdb_id = file[rand].imdbID;
+            year = file[rand].Year;
+            director = file[rand].Director;
+            actors = file[rand].Actors;
             plot = file[rand].Plot;
 
             // no funcitons inside a loop - increasing perfomance!
@@ -384,7 +384,7 @@ function generateMovieSchema(recipientId, user) {
                 flag = false;
                 res[0] = {
                     poster: poster,
-                    movie_id: file[rand]['imdbID']
+                    movie_id: file[rand].imdbID
                 };
                 res[1] = `🎬 ${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}\nPlot: ${plot}`;
                 console.log(res);

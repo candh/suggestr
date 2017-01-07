@@ -12,7 +12,7 @@ The movies are added in a array, by hand, but not the metadata of them, Just the
 
 ###Contribution 🖥
 Add a movie to the array
-     
+
     vi tools/movie-list.js
 
 Run this script to add the movie to the `movies.json` file found in the db folder
@@ -23,9 +23,9 @@ The user data is stored on a mongodb on the cloud.
 
 ###Credits
 - [OMDB API](https://www.omdbapi.com/) For the movies metadata. Amazing API
-- [mlab](mlab.com) for the database hosting
-- [Heroku](heroku.com) for the app hosting
-- [Facebook](developers.facebook.com) for their messenger API
+- [mlab](https://mlab.com/welcome/) for the database hosting
+- [Heroku](https://heroku.com) for the app hosting
+- [Facebook](https://developers.facebook.com) for their messenger API
 - [Flaticon](http://www.flaticon.com/) for the icons on the landing page
 
 ###Made by 😀
