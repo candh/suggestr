@@ -333,11 +333,11 @@ function AI(query, ctx, senderID) {
             return true;
         }
     } else if (ctx == 3) {
-        if (query.match(/seen/) || query.match(/watched/)) {
+        if (query.includes("seen") || query.includes("watched")) {
             return true;
         }
     } else if (ctx == 4) {
-        if (query.match(/great/) || query.match(/i'll watch/)) {
+        if (query.includes("great") || query.includes("i'll watch")) {
             return true;
         }
     }
