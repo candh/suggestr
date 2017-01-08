@@ -17,7 +17,6 @@ mongoose.set('debug', true);
 var _ = require('underscore');
 var genr = require('../tools/genre.js');
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
-
 // *********^
 function typingOn(recipientId, cb) {
     var data = {
@@ -161,6 +160,7 @@ function sendGreeting() {
             var messageId = body.message_id;
 
             console.log("Successfully sent greeting message to", recipientId);
+            sendMessage(recipientId, "Hi, there I'll suggest you movies. All you have to do is ask. Beneath every movie should be three buttons 😊, just press them according to your situation for optimal experience!");
         } else {
             console.error("Unable to send message.");
             // console.error(response);
