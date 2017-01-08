@@ -216,7 +216,6 @@ function payloadHandler(event) {
     }
 }
 
-
 function receivedMessage(event) {
     var senderID = event.sender.id;
     var recipientID = event.recipient.id;
@@ -229,16 +228,38 @@ function receivedMessage(event) {
 
     if (messageText) {
         console.log('\n\n\n messsage recieved \n\n\n', event.message);
-
-
         //sendMessage(senderID, messageText);
-
         if (AI(messageText, 0, senderID) === undefined) {
             // then user asked for a movie
             typingOn(senderID);
             // dev
             //sendGenericMessage(senderID);
             // sendMessage(senderID, "sorry we're working on the bot");
+        } else if (AI(messageText, 2)) {
+            // user asked for another movie
+            typingOn(senderID, function() {
+                generateMovie(senderID);
+            });
+        } else if (AI(messageText, 3)) {
+            // that means that the user have already seen that movie that we just suggested
+            typingOn(senderID, function() {
+                retrieveLastMovie(senderID, function(mov) {
+                    writeUserMovie(senderID, mov, function() {
+                        generateMovie(senderID);
+                    });
+                });
+            });
+
+        } else if (AI(messageText, 4)) {
+            resetGenre(senderID, function() {
+                typingOn(senderID, function() {
+                    retrieveLastMovie(senderID, function(mov) {
+                        writeUserMovie(senderID, mov, function() {
+                            sendMessage(senderID, "Okay! That's great. Have a good one! I'll remember this!");
+                        });
+                    });
+                });
+            });
         } else if (messageText.toLowerCase() == 'reset') {
             resetMovies(senderID);
         } else if (AI(messageText, 1)) {
@@ -255,6 +276,20 @@ function receivedMessage(event) {
     }
 }
 
+
+
+function retrieveLastMovie(id, cb) {
+    User.findById(id, function(err, user) {
+        if (err) {
+            console.log(err);
+        } else if (user !== null) {
+            if (cb) {
+                cb(user.suggested[user.suggested.length - 1]);
+            }
+        }
+    });
+}
+
 // *************** AI
 function AI(query, ctx, senderID) {
     // 0 - INTENT - Suggest a movie
@@ -262,7 +297,7 @@ function AI(query, ctx, senderID) {
     query = query.toLowerCase();
     query = query.replace(/[^a-zA-Z]/g, "");
     if (ctx === 0) {
-        if (query.match(/good/) || query.match(/suggest/) || query.match(/film/) || query.match(/movie/) || query.match(/tell/) || query.match(/watch/)) {
+        if (query.match(/good/) || query.match(/suggest/) || query.match(/film/) || query.match(/movie/) || query.match(/tell/) || query.match(/watch/) || query.match(/something new/)) {
             // genre check
             genr(function(genres) {
                 console.log(genres);
@@ -292,6 +327,18 @@ function AI(query, ctx, senderID) {
             return "I was made by my daddy. His twitter is @candhforlife";
         } else {
             return false;
+        }
+    } else if (ctx == 2) {
+        if (query.match(/another/) || query.match(/again/) || query.match(/better/) || query.match(/else/)) {
+            return true;
+        }
+    } else if (ctx == 3) {
+        if (query.match(/seen/) || query.match(/watched/)) {
+            return true;
+        }
+    } else if (ctx == 4) {
+        if (query.match(/great/) || query.match(/i'll watch/)) {
+            return true;
         }
     }
 }
