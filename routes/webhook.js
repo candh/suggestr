@@ -160,7 +160,6 @@ function sendGreeting() {
             var messageId = body.message_id;
 
             console.log("Successfully sent greeting message to", recipientId);
-            sendMessage(recipientId, "Hi, there I'll suggest you movies. All you have to do is ask. Beneath every movie should be three buttons 😊, just press them according to your situation for optimal experience!");
         } else {
             console.error("Unable to send message.");
             // console.error(response);
@@ -320,7 +319,7 @@ function AI(query, ctx, senderID) {
     } else if (ctx == 1) {
         // okay so this is the general type of umm, conversation
         if (query.includes("hey") || query.match("hi") || query.match("hola") || query.match("bonjour")) {
-            return "Hello there human! I'm here to help you! You can ask me to suggest you movies!";
+            return "Hello there human! I'm here to help you! You can ask me to suggest you movies! Beneath every movie i suggest, should be three buttons 😊 just press them for the best experience";
         } else if (query.includes("sup") || query.includes("whats up")) {
             return "Nothing much. I'm good";
         } else if (query.includes("who made you") || query.includes("creator")) {
