@@ -297,7 +297,7 @@ function AI(query, ctx, senderID) {
     query = query.toLowerCase();
     query = query.replace(/[^a-zA-Z]/g, "");
     if (ctx === 0) {
-        if (query.match(/good/) || query.match(/suggest/) || query.match(/film/) || query.match(/movie/) || query.match(/tell/) || query.match(/watch/) || query.match(/something new/)) {
+        if (query.includes("good") || query.includes("suggest") || query.includes("film") || query.includes("movie") || query.includes("tell") || query.includes("watch") || query.includes("somethingnew")) {
             // genre check
             genr(function(genres) {
                 console.log(genres);
@@ -319,17 +319,17 @@ function AI(query, ctx, senderID) {
         }
     } else if (ctx == 1) {
         // okay so this is the general type of umm, conversation
-        if (query.match(/hey/) || query.match(/hi/) || query.match(/hola/) || query.match(/bonjour/)) {
+        if (query.includes("hey") || query.match("hi") || query.match("hola") || query.match("bonjour")) {
             return "Hello there human! I'm here to help you! You can ask me to suggest you movies!";
-        } else if (query.match(/sup/) || query.match(/what's up/) || query.match(/whats up/)) {
+        } else if (query.includes("sup") || query.includes("whats up")) {
             return "Nothing much. I'm good";
-        } else if (query.match(/who made you/) || query.match(/creator/)) {
+        } else if (query.includes("who made you") || query.includes("creator")) {
             return "I was made by my daddy. His twitter is @candhforlife";
         } else {
             return false;
         }
     } else if (ctx == 2) {
-        if (query.match(/another/) || query.match(/again/) || query.match(/better/) || query.match(/else/)) {
+        if (query.includes("another") || query.includes("again") || query.includes("better") || query.includes("else")) {
             return true;
         }
     } else if (ctx == 3) {
@@ -337,7 +337,7 @@ function AI(query, ctx, senderID) {
             return true;
         }
     } else if (ctx == 4) {
-        if (query.includes("great") || query.includes("i'll watch")) {
+        if (query.includes("great") || query.includes("illwatch")) {
             return true;
         }
     }
