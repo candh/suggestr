@@ -13,10 +13,12 @@ var DB_PASS = process.env.pass;
 var senders = [];
 var mongoose = require('mongoose');
 var User = require('../models/User.model');
+var Dict = require('../models/Dictionary.model');
 mongoose.set('debug', true);
 var _ = require('underscore');
 var genr = require('../tools/genre.js');
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
+
 // *********^
 function typingOn(recipientId, cb) {
     var data = {
@@ -224,7 +226,6 @@ function receivedMessage(event) {
     var messageText = message.text;
     var messageAttachments = message.attachments;
 
-
     if (messageText) {
         console.log('\n\n\n messsage recieved \n\n\n', event.message);
         //sendMessage(senderID, messageText);
@@ -293,7 +294,14 @@ function retrieveLastMovie(id, cb) {
 function AI(query, ctx, senderID) {
     // 0 - INTENT - Suggest a movie
     // 1 - INTENT - General
+    var words = [];
     query = query.toLowerCase();
+    arr = query.split(' ');
+
+    arr.forEach(function(e, i) {
+        console.log(e);
+    })
+
     query = query.replace(/[^a-zA-Z]/g, "");
     if (ctx === 0) {
         if (query.includes("good") || query.includes("suggest") || query.includes("film") || query.includes("movie") || query.includes("tell") || query.includes("watch") || query.includes("somethingnew")) {
