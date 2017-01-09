@@ -271,6 +271,25 @@ function receivedMessage(event) {
                     var genre = parameters.genre;
                     var type = parameters.type;
 
+
+
+                    if (genre.length > 0) {
+                        genr(function(genres) {
+                            new_genres = genres.filter(function(e, i) {
+                                e = e.replace(/[^a-zA-Z]/g, "");
+                                e = e.toLowerCase();
+                                if (query.match(e)) {
+                                    return true;
+                                }
+                            });
+
+                            console.log(new_genres);
+                            // saveToGenre(senderID, new_genres, function() {
+                            //     generateMovie(senderID);
+                            // });
+                        });
+                    }
+
                     console.log(genre, type)
 
 
