@@ -232,7 +232,7 @@ function receivedMessage(event) {
 
     if (messageText) {
         var ai = api.textRequest(messageText, {
-            sessionId: senderID;
+            sessionId: senderID
         });
         ai.on('response', function(response) {
             action = response.action;
