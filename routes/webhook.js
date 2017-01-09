@@ -272,26 +272,37 @@ function receivedMessage(event) {
                     var type = parameters.type;
 
 
+                    genr(function(genres) {
+                        new_genres = genres.filter(function(e, i) {
+                            e = e.replace(/[^a-zA-Z]/g, "");
+                            e = e.toLowerCase();
 
-                    if (genre.length > 0) {
-                        genr(function(genres) {
-                            new_genres = genres.filter(function(e, i) {
-                                e = e.replace(/[^a-zA-Z]/g, "");
-                                e = e.toLowerCase();
-
-                                for (var i = 0; i < genre.length; i++) {
-                                    if(genre[i].match(e)){
-                                        return true;
-                                    }
+                            for (var i = 0; i < genre.length; i++) {
+                                if (genre[i].match(e)) {
+                                    return true;
                                 }
-                            });
-
-                            console.log(new_genres);
-                            // saveToGenre(senderID, new_genres, function() {
-                            //     generateMovie(senderID);
-                            // });
+                            }
                         });
-                    }
+
+                        // if user specified no type, he ain't got no type
+                        if (type.length == 0) {
+                            type = null;
+                        }
+
+                        if (new_genres.length > 0) {
+                            // then used did specified some genres
+                            sendMessage(senderID, `You specified these genres: ${new_genres.join(', ')} I'll get to it!`);
+                        } else {
+                            sendMessage(senderID, `You specified no genre at all! It's okay, I'll tell you some good movies`);
+                        }
+
+                        saveToGenre(senderID, new_genres, function() {
+                            generateMovie(senderID, type);
+                        });
+
+
+                    });
+
 
                     console.log(genre, type)
 
@@ -299,24 +310,64 @@ function receivedMessage(event) {
                 } else if (action == 'actions') {
                     var actions = parameters.actions;
 
+                    var already_seen = [
+                        "Oh! I'll just suggest another one",
+                        "Okay, that's cool. Another one coming right up!",
+                        "Yeah of course, here's another good movie",
+                        "Don't even worry about it! I got you covered",
+                        "I'll remember that. Let's try another one",
+                        "Hmm, lets try another",
+                        "I think you'll like this one!",
+                        "Maybe this, then?",
+                        "Here's a good movie"
+                    ];
+
+                    var usr_watch = [
+                        "Okay, have a good time!",
+                        "Glad to be of your assitance, Enjoy your movie!",
+                        "Oh, that's great... I can rest now. Just kidding, machines don't rest",
+                        "hmu if you need another good movie!"
+                    ]
+
+                    var al = getRandomInt(0, already_seen.length - 1);
+                    var si = getRandomInt(0, usr_watch.length - 1);
 
                     switch (actions) {
                         case 'watched':
                             console.log('ALREADY SEEN')
+                            sendMessage(senderID, already_seen[al], function() {
+                                typingOn(senderID, function() {
+                                    retrieveLastMovie(senderID, function(mov) {
+                                        writeUserMovie(senderID, mov, function() {
+                                            generateMovie(senderID);
+                                        });
+                                    });
+                                });
+                            });
                             break;
                         case "i'll watch":
-                            console.log('USER WILL WATCH')
+                            console.log('USER WILL WATCH');
+                            sendMessage(senderID, usr_watch[si], function() {
+                                resetGenre(senderID, function() {
+                                    typingOn(senderID, function() {
+                                        retrieveLastMovie(senderID, function(mov) {
+                                            writeUserMovie(senderID, mov, function() {});
+                                        });
+                                    });
+                                });
+                            });
                             break;
                         case "another one":
                             console.log('ANOTHER ONE');
+                            sendMessage(senderID, already_seen[al], function() {
+                                typingOn(senderID, function() {
+                                    generateMovie(senderID);
+                                });
+                            })
                             break;
                             // aint nobody got time fo default my ni... nevermind
                     }
-
-
-
                 }
-
             });
             ai.on('error', function(error) {
                 console.log(error);
