@@ -248,7 +248,7 @@ function receivedMessage(event) {
         });
 
         ai.on('response', function(response) {
-            console.log(`\n\n\n\n\n\n${response}\n\n\n\n\n\n`);
+            console.log(`\n\n\n\n\n\n${response.result}\n\n\n\n\n\n`);
         });
 
         ai.end();
