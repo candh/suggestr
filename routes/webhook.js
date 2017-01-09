@@ -260,12 +260,12 @@ function receivedMessage(event) {
                 var type = parameters.type;
 
                 console.log(genre, type)
-            
+
 
             } else if (action == 'actions') {
                 var actions = parameters.actions;
-                
-                
+
+
                 switch (actions) {
                     case 'watched':
                         console.log('ALREADY SEEN')
@@ -276,13 +276,16 @@ function receivedMessage(event) {
                     case "another one":
                         console.log('ANOTHER ONE');
                         break;
-                    // aint nobody got time fo default my ni... nevermind
+                        // aint nobody got time fo default my ni... nevermind
                 }
 
 
 
             }
 
+        });
+        ai.on('error', function(error) {
+            console.log(error);
         });
 
         ai.end();
