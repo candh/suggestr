@@ -420,21 +420,6 @@ function retrieveLastMovie(id, cb) {
     });
 }
 
-function sendError(recipientId, ctx) {
-    // 0 - not recognized command - initial
-    //
-    if (ctx === 0) {
-        var messageData = {
-            recipient: {
-                id: recipientId
-            },
-            message: {
-                text: "I'm sorry. Try typing \"Suggest me some movies\" or \"What should I watch today?\""
-            }
-        };
-        callSendAPI(messageData);
-    }
-}
 // *********************
 
 // **************************
@@ -536,7 +521,6 @@ function generateMovieSchema(recipientId, user) {
                 }
             }
         }
-
 
     });
 
