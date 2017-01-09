@@ -372,6 +372,10 @@ function receivedMessage(event) {
                     });
                 }
 
+                else {
+                    sendMessage(senderID, 'Hey, I did not understood that!');
+                }
+
             });
             ai.on('error', function(error) {
                 console.log(error);
