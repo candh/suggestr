@@ -291,22 +291,20 @@ function receivedMessage(event) {
 
                         if (new_genres.length > 0) {
                             // then used did specified some genres
-                            sendMessage(senderID, `You specified these genres: ${new_genres.join(', ')}. I'll get to it!`);
+                            sendMessage(senderID, `You specified these genres: ${new_genres.join(', ')}. I'll get to it!`, function() {
+                                saveToGenre(senderID, new_genres, function() {
+                                    generateMovie(senderID, type);
+                                });
+                            });
                         } else {
-                            sendMessage(senderID, `You specified no genre at all! It's okay, I'll tell you some good movies`);
+                            sendMessage(senderID, `You specified no genre at all! It's okay, I'll tell you some good movies`, function() {
+                                saveToGenre(senderID, new_genres, function() {
+                                    generateMovie(senderID, type);
+                                });
+                            });
                         }
-
-                        saveToGenre(senderID, new_genres, function() {
-                            generateMovie(senderID, type);
-                        });
-
-
                     });
-
-
                     console.log(genre, type)
-
-
                 } else if (action == 'actions') {
                     var actions = parameters.actions;
 
@@ -367,7 +365,13 @@ function receivedMessage(event) {
                             break;
                             // aint nobody got time fo default my ni... nevermind
                     }
+                } else if (action == smalltalk.greetings) {
+                    var msg = result.fulfillment.speech;
+                    typingOn(senderID, function() {
+                        sendMessage(senderID, msg);
+                    });
                 }
+
             });
             ai.on('error', function(error) {
                 console.log(error);
@@ -583,7 +587,7 @@ function generateMovieSchema(recipientId, user) {
                     poster: poster,
                     movie_id: file[rand].imdbID
                 };
-                res[1] = `🎬 ${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}\nPlot: ${plot}`;
+                res[1] = `🎬 ${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}`;
                 movieSchemaSend(res, recipientId);
 
             } else if (suggested.length > 0) {
@@ -927,7 +931,7 @@ function callSendAPI(messageData, cb) {
 
             //console.log("Successfully sent message with id %s to recipient %s",
             // messageId, recipientId);
-            if(cb){
+            if (cb) {
                 cb();
             }
             senders.push(recipientId);
