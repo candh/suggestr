@@ -93,6 +93,16 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+function guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}
+
 // webhook challenege/
 router.get('/', function(req, res) {
     if (req.query['hub.mode'] === 'subscribe' &&
@@ -231,17 +241,19 @@ function receivedMessage(event) {
     var messageAttachments = message.attachments;
 
     if (messageText) {
+
+
         var ai = api.textRequest(messageText, {
-            sessionId: senderID
+            sessionId: guid()
         });
+
         ai.on('response', function(response) {
-            action = response.action;
-            parameters = response.parameters;
-            //genre = response.parameters.genre;
-                console.log(`\n\n\n\n\n\n\n\n ${response.action} \n\n\n\n\n\n\n\n`);
-            
+            console.log(`\n\n\n\n\n\n${response}\n\n\n\n\n\n`);
         });
+
         ai.end();
+
+
         console.log('\n\n\n messsage recieved \n\n\n', event.message);
         //sendMessage(senderID, messageText);
         if (AI(messageText, 0, senderID) === undefined) {
