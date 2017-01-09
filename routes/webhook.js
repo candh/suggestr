@@ -238,7 +238,7 @@ function receivedMessage(event) {
             action = response.action;
             parameters = response.parameters;
             //genre = response.parameters.genre;
-                console.log(`\n\n\n\n\n\n\n\n ${response} \n\n\n\n\n\n\n\n`);
+                console.log(`\n\n\n\n\n\n\n\n ${JSON.parse(response)} \n\n\n\n\n\n\n\n`);
             
         });
         ai.end();
@@ -309,6 +309,7 @@ function retrieveLastMovie(id, cb) {
 function AI(query, ctx, senderID) {
     // 0 - INTENT - Suggest a movie
     // 1 - INTENT - General
+    query = query.toLowerCase();
     query = query.replace(/[^a-zA-Z]/g, "");
     if (ctx === 0) {
         if (query.includes("good") || query.includes("suggest") || query.includes("film") || query.includes("movie") || query.includes("tell") || query.includes("watch") || query.includes("somethingnew")) {
