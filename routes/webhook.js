@@ -897,7 +897,7 @@ function resetMovies(recipientId, cb) {
 
 // ******************** API functions
 
-function sendMessage(recipientId, message) {
+function sendMessage(recipientId, message, cb) {
     typingOff(recipientId, function() {
         var messageData = {
             recipient: {
@@ -907,11 +907,11 @@ function sendMessage(recipientId, message) {
                 text: message
             }
         };
-        callSendAPI(messageData);
+        callSendAPI(messageData, cb);
     });
 }
 
-function callSendAPI(messageData) {
+function callSendAPI(messageData, cb) {
     request({
         uri: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
@@ -927,6 +927,9 @@ function callSendAPI(messageData) {
 
             //console.log("Successfully sent message with id %s to recipient %s",
             // messageId, recipientId);
+            if(cb){
+                cb();
+            }
             senders.push(recipientId);
             User.findById(recipientId, function(err, user) {
                 if (err) {
