@@ -204,10 +204,14 @@ function sendGreeting() {
 sendGreeting();
 
 function payloadHandler(event) {
+
+    var al = getRandomInt(0, convo.already_seen.length - 1);
+    var si = getRandomInt(0, convo.usr_watch.length - 1);
+    var sf = getRandomInt(0, convo.dont_get_it.length - 1);
     var payload = event.message.quick_reply.payload;
     var senderID = event.sender.id;
     var messageText = event.message.text;
-    if (payload) {
+    if (payload && senderID !== page_id) {
         var properties = payload.split(', ');
         var obj = {};
         properties.forEach(function(property) {
@@ -221,22 +225,26 @@ function payloadHandler(event) {
 
         switch (messageText) {
             case "Seen it":
-                typingOn(user_id, function() {
-                    writeUserMovie(user_id, movie_id, function() {
-                        generateMovie(user_id);
+                sendMessage(user_id, convo.already_seen[al], function() {
+                    typingOn(user_id, function() {
+                        writeUserMovie(user_id, movie_id, function() {
+                            generateMovie(user_id);
+                        });
                     });
                 });
                 break;
             case "Another One":
-                typingOn(user_id, function() {
-                    generateMovie(user_id);
-                });
+                sendMessage(user_id, convo.already_seen[al], function() {
+                    typingOn(user_id, function() {
+                        generateMovie(user_id);
+                    });
+                })
                 break;
             case "I'll watch":
-                resetGenre(user_id, function() {
-                    typingOn(user_id, function() {
-                        writeUserMovie(user_id, movie_id, function() {
-                            sendMessage(user_id, "Okay! That's great. Have a good one! I'll remember this!");
+                typingOn(user_id, function() {
+                    sendMessage(user_id, convo.usr_watch[si], function() {
+                        resetGenre(user_id, function() {
+                            writeUserMovie(user_id, movie_id, function() {});
                         });
                     });
                 });
@@ -340,9 +348,9 @@ function receivedMessage(event) {
                             break;
                         case "i'll watch":
                             console.log('USER WILL WATCH');
-                            sendMessage(senderID, convo.usr_watch[si], function() {
-                                resetGenre(senderID, function() {
-                                    typingOn(senderID, function() {
+                            typingOn(senderID, function() {
+                                sendMessage(senderID, convo.usr_watch[si], function() {
+                                    resetGenre(senderID, function() {
                                         retrieveLastMovie(senderID, function(mov) {
                                             writeUserMovie(senderID, mov, function() {});
                                         });
