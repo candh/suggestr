@@ -24,6 +24,7 @@ The user data is stored on a mongodb on the cloud.
 ###Credits
 - [OMDB API](https://www.omdbapi.com/) For the movies metadata. Amazing API
 - [mlab](https://mlab.com/welcome/) for the database hosting
+- [API AI](https://api.ai/) for the AI I wanted. Tried to write my own, but when users grew, uncertainty among their queries also grew. Couldn't handle it. Thanks to them. Amazing work. 
 - [Heroku](https://heroku.com) for the app hosting
 - [Facebook](https://developers.facebook.com) for their messenger API
 - [Flaticon](http://www.flaticon.com/) for the icons on the landing page
