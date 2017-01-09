@@ -291,7 +291,7 @@ function receivedMessage(event) {
 
                         if (new_genres.length > 0) {
                             // then used did specified some genres
-                            sendMessage(senderID, `You specified these genres: ${new_genres.join(', ')} I'll get to it!`);
+                            sendMessage(senderID, `You specified these genres: ${new_genres.join(', ')}. I'll get to it!`);
                         } else {
                             sendMessage(senderID, `You specified no genre at all! It's okay, I'll tell you some good movies`);
                         }
@@ -378,49 +378,49 @@ function receivedMessage(event) {
 
         // console.log('\n\n\n messsage recieved \n\n\n', event.message);
         //sendMessage(senderID, messageText);
-        if (AI(messageText, 0, senderID) === undefined) {
-            // then user asked for a movie
-            typingOn(senderID);
-            // dev
-            //sendGenericMessage(senderID);
-            // sendMessage(senderID, "sorry we're working on the bot");
-        } else if (AI(messageText, 2)) {
-            // user asked for another movie
-            typingOn(senderID, function() {
-                generateMovie(senderID);
-            });
-        } else if (AI(messageText, 3)) {
-            // that means that the user have already seen that movie that we just suggested
-            typingOn(senderID, function() {
-                retrieveLastMovie(senderID, function(mov) {
-                    writeUserMovie(senderID, mov, function() {
-                        generateMovie(senderID);
-                    });
-                });
-            });
+        // if (AI(messageText, 0, senderID) === undefined) {
+        //     // then user asked for a movie
+        //     typingOn(senderID);
+        //     // dev
+        //     //sendGenericMessage(senderID);
+        //     // sendMessage(senderID, "sorry we're working on the bot");
+        // } else if (AI(messageText, 2)) {
+        //     // user asked for another movie
+        //     typingOn(senderID, function() {
+        //         generateMovie(senderID);
+        //     });
+        // } else if (AI(messageText, 3)) {
+        //     // that means that the user have already seen that movie that we just suggested
+        //     typingOn(senderID, function() {
+        //         retrieveLastMovie(senderID, function(mov) {
+        //             writeUserMovie(senderID, mov, function() {
+        //                 generateMovie(senderID);
+        //             });
+        //         });
+        //     });
 
-        } else if (AI(messageText, 4)) {
-            resetGenre(senderID, function() {
-                typingOn(senderID, function() {
-                    retrieveLastMovie(senderID, function(mov) {
-                        writeUserMovie(senderID, mov, function() {
-                            sendMessage(senderID, "Okay! That's great. Have a good one! I'll remember this!");
-                        });
-                    });
-                });
-            });
-        } else if (messageText.toLowerCase() == 'reset') {
-            resetMovies(senderID);
-        } else if (AI(messageText, 1)) {
-            // send a small text. Like just a chat!
-            typingOn(senderID, function() {
-                sendMessage(senderID, AI(messageText, 1));
-            });
+        // } else if (AI(messageText, 4)) {
+        //     resetGenre(senderID, function() {
+        //         typingOn(senderID, function() {
+        //             retrieveLastMovie(senderID, function(mov) {
+        //                 writeUserMovie(senderID, mov, function() {
+        //                     sendMessage(senderID, "Okay! That's great. Have a good one! I'll remember this!");
+        //                 });
+        //             });
+        //         });
+        //     });
+        // } else if (messageText.toLowerCase() == 'reset') {
+        //     resetMovies(senderID);
+        // } else if (AI(messageText, 1)) {
+        //     // send a small text. Like just a chat!
+        //     typingOn(senderID, function() {
+        //         sendMessage(senderID, AI(messageText, 1));
+        //     });
 
-        } else {
-            // we don't recognize what the user said
-            sendError(senderID, 0);
-        }
+        // } else {
+        //     // we don't recognize what the user said
+        //     sendError(senderID, 0);
+        // }
         process.stdout.write(JSON.stringify(message));
     }
 
