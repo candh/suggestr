@@ -379,6 +379,12 @@ function receivedMessage(event) {
                         sendMessage(senderID, msg);
                     });
                 }
+                else if (action == 'smalltalk.person'){
+                    var msg = result.fulfillment.speech;
+                    typingOn(senderID, function() {
+                        sendMessage(senderID, msg);
+                    });
+                }
                 else {
                     sendMessage(senderID, dont_get_it[sf]);
                 }
