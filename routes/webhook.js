@@ -10,6 +10,7 @@ var access_token = process.env.access_token;
 var PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var DB_USER = process.env.user;
 var DB_PASS = process.env.pass;
+var API_AI = process.env.apiai;
 var senders = [];
 var mongoose = require('mongoose');
 var User = require('../models/User.model');
@@ -18,6 +19,9 @@ mongoose.set('debug', true);
 var _ = require('underscore');
 var genr = require('../tools/genre.js');
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
+var apiai = require('apiai');
+var api = apiai(API_AI);
+
 
 // *********^
 function typingOn(recipientId, cb) {
@@ -227,6 +231,18 @@ function receivedMessage(event) {
     var messageAttachments = message.attachments;
 
     if (messageText) {
+        var ai = api.textRequest(messageText, {
+            sessionId: senderID;
+        });
+        ai.on('response', function(response) {
+            action = response.action;
+            parameters = response.parameters;
+            genre = response.parameters.genre;
+            if (action == 'suggest.movie') {
+                console.log(action, parameters, genre);
+            }
+        });
+        ai.end();
         console.log('\n\n\n messsage recieved \n\n\n', event.message);
         //sendMessage(senderID, messageText);
         if (AI(messageText, 0, senderID) === undefined) {

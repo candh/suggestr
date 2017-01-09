@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "apiai": "^3.0.3",
     "async": "^2.1.4",
     "body-parser": "~1.15.2",
     "colors": "^1.1.2",
