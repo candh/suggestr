@@ -293,7 +293,7 @@ function receivedMessage(event) {
         ai.end();
 
 
-        console.log('\n\n\n messsage recieved \n\n\n', event.message);
+       // console.log('\n\n\n messsage recieved \n\n\n', event.message);
         //sendMessage(senderID, messageText);
         if (AI(messageText, 0, senderID) === undefined) {
             // then user asked for a movie
@@ -489,7 +489,6 @@ function generateMovieSchema(recipientId, user) {
 
             if (files.genre_flag) {
                 totalMovies = files.genres.length;
-                console.log('we here');
             }
 
             if (suggested.length === 0 && movies.length === 0) {
@@ -499,7 +498,6 @@ function generateMovieSchema(recipientId, user) {
                     movie_id: file[rand].imdbID
                 };
                 res[1] = `🎬 ${name} (${year})\nCountry: ${country},\nDirector: ${director},\nActors: ${actors}\nIMDB rating: ${imdb_rating}\nPlot: ${plot}`;
-                console.log(res);
                 movieSchemaSend(res, recipientId);
 
             } else if (suggested.length > 0) {
@@ -508,7 +506,6 @@ function generateMovieSchema(recipientId, user) {
                     var cl = cnt(file, suggested_total);
 
                     if (cl.length == file.length) {
-                        console.log('here');
                         sendMessage(recipientId, "I already have suggested all the movies for this genre. Try another genre or no genre at all to see all the movies. If you wanna go over them again, reply with \"reset\"");
                         flag = false;
                     }
@@ -610,7 +607,6 @@ function movieSchemaSend(res, recipientId) {
         var messageData;
         if (i === 0) {
             saveToSuggested(recipientId, e.movie_id, function(file) {
-                console.log(file);
             });
             messageData = {
                 recipient: {
@@ -844,8 +840,8 @@ function callSendAPI(messageData) {
             var recipientId = body.recipient_id;
             var messageId = body.message_id;
 
-            console.log("Successfully sent message with id %s to recipient %s",
-                messageId, recipientId);
+            //console.log("Successfully sent message with id %s to recipient %s",
+               // messageId, recipientId);
             senders.push(recipientId);
             User.findById(recipientId, function(err, user) {
                 if (err) {
