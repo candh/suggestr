@@ -21,7 +21,7 @@ var genr = require('../tools/genre.js');
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
 var apiai = require('apiai');
 var api = apiai(API_AI);
-
+var page_id = process.env.page_id;
 
 // *********^
 function typingOn(recipientId, cb) {
@@ -245,55 +245,65 @@ function receivedMessage(event) {
 
         console.log(`\n\n\n\n\n\n ${messageText} , ${senderID} \n\n\n\n\n\n`);
 
-        var ai = api.textRequest(messageText, {
-            sessionId: 'suggestr'
-        });
-
-        ai.on('response', function(response) {
-
-            var result = response.result;
-            var parameters = result.parameters;
-            var action = result.action;
-
-            if (action == 'suggest.movie') {
-                // user asked for a movie
-
-                var genre = parameters.genre;
-                var type = parameters.type;
-
-                console.log(genre, type)
+        // okay so seems like the message we sent is also echoed back to the script.. with
+        // the senderID of the page. why is that? I don't understand that.
+        // So i'm just gonna ignore it because i'm having trouble understanding it.
 
 
-            } else if (action == 'actions') {
-                var actions = parameters.actions;
+        if (senderID !== page_id) {
 
 
-                switch (actions) {
-                    case 'watched':
-                        console.log('ALREADY SEEN')
-                        break;
-                    case "i'll watch":
-                        console.log('USER WILL WATCH')
-                        break;
-                    case "another one":
-                        console.log('ANOTHER ONE');
-                        break;
-                        // aint nobody got time fo default my ni... nevermind
+
+
+            var ai = api.textRequest(messageText, {
+                sessionId: 'suggestr'
+            });
+
+            ai.on('response', function(response) {
+
+                var result = response.result;
+                var parameters = result.parameters;
+                var action = result.action;
+
+                if (action == 'suggest.movie') {
+                    // user asked for a movie
+
+                    var genre = parameters.genre;
+                    var type = parameters.type;
+
+                    console.log(genre, type)
+
+
+                } else if (action == 'actions') {
+                    var actions = parameters.actions;
+
+
+                    switch (actions) {
+                        case 'watched':
+                            console.log('ALREADY SEEN')
+                            break;
+                        case "i'll watch":
+                            console.log('USER WILL WATCH')
+                            break;
+                        case "another one":
+                            console.log('ANOTHER ONE');
+                            break;
+                            // aint nobody got time fo default my ni... nevermind
+                    }
+
+
+
                 }
 
+            });
+            ai.on('error', function(error) {
+                console.log(error);
+            });
 
+            ai.end();
+        }
 
-            }
-
-        });
-        ai.on('error', function(error) {
-            console.log(error);
-        });
-
-        ai.end();
-
-
-       // console.log('\n\n\n messsage recieved \n\n\n', event.message);
+        // console.log('\n\n\n messsage recieved \n\n\n', event.message);
         //sendMessage(senderID, messageText);
         if (AI(messageText, 0, senderID) === undefined) {
             // then user asked for a movie
@@ -340,6 +350,9 @@ function receivedMessage(event) {
         }
         process.stdout.write(JSON.stringify(message));
     }
+
+
+
 }
 
 
@@ -606,8 +619,7 @@ function movieSchemaSend(res, recipientId) {
     res.forEach(function(e, i) {
         var messageData;
         if (i === 0) {
-            saveToSuggested(recipientId, e.movie_id, function(file) {
-            });
+            saveToSuggested(recipientId, e.movie_id, function(file) {});
             messageData = {
                 recipient: {
                     id: recipientId
@@ -841,7 +853,7 @@ function callSendAPI(messageData) {
             var messageId = body.message_id;
 
             //console.log("Successfully sent message with id %s to recipient %s",
-               // messageId, recipientId);
+            // messageId, recipientId);
             senders.push(recipientId);
             User.findById(recipientId, function(err, user) {
                 if (err) {
