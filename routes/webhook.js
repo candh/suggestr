@@ -249,11 +249,7 @@ function receivedMessage(event) {
         // the senderID of the page. why is that? I don't understand that.
         // So i'm just gonna ignore it because i'm having trouble understanding it.
 
-
         if (senderID !== page_id) {
-
-
-
 
             var ai = api.textRequest(messageText, {
                 sessionId: 'suggestr'
@@ -320,15 +316,25 @@ function receivedMessage(event) {
                         "Here's a good movie"
                     ];
 
+                    var dont_get_it = [
+                        "Sorry, I did not understood that 😔",
+                        "I'm not sure what you said. I'm really sorry",
+                        "I did not get that. Can you please try again?",
+                        "Are you having trouble? Try typing, suggest me some good movies!",
+                        "I'm sorry. English is not my first Language. I'm still learning it",
+                        "I think I misunderstood what you just said"
+                    ];
+
                     var usr_watch = [
-                        "Okay, have a good time!",
-                        "Glad to be of your assitance, Enjoy your movie!",
+                        "Okay, have a good time! 👍",
+                        "Glad to be of your assitance, Enjoy your movie! 👌",
                         "Oh, that's great... I can rest now. Just kidding, machines don't rest",
-                        "hmu if you need another good movie!"
+                        "hmu if you need another good movie! 😉"
                     ]
 
                     var al = getRandomInt(0, already_seen.length - 1);
                     var si = getRandomInt(0, usr_watch.length - 1);
+                    var sf = getRandomInt(0, dont_get_it.length - 1);
 
                     switch (actions) {
                         case 'watched':
@@ -371,9 +377,11 @@ function receivedMessage(event) {
                         sendMessage(senderID, msg);
                     });
                 }
-
+                else if (messageText.toLowerCase() == 'reset'){
+                    resetMovies(senderID);
+                }
                 else {
-                    sendMessage(senderID, 'Hey, I did not understood that!');
+                    sendMessage(senderID, dont_get_it[sf]);
                 }
 
             });
@@ -383,60 +391,12 @@ function receivedMessage(event) {
 
             ai.end();
         }
-
-        // console.log('\n\n\n messsage recieved \n\n\n', event.message);
-        //sendMessage(senderID, messageText);
-        // if (AI(messageText, 0, senderID) === undefined) {
-        //     // then user asked for a movie
-        //     typingOn(senderID);
-        //     // dev
-        //     //sendGenericMessage(senderID);
-        //     // sendMessage(senderID, "sorry we're working on the bot");
-        // } else if (AI(messageText, 2)) {
-        //     // user asked for another movie
-        //     typingOn(senderID, function() {
-        //         generateMovie(senderID);
-        //     });
-        // } else if (AI(messageText, 3)) {
-        //     // that means that the user have already seen that movie that we just suggested
-        //     typingOn(senderID, function() {
-        //         retrieveLastMovie(senderID, function(mov) {
-        //             writeUserMovie(senderID, mov, function() {
-        //                 generateMovie(senderID);
-        //             });
-        //         });
-        //     });
-
-        // } else if (AI(messageText, 4)) {
-        //     resetGenre(senderID, function() {
-        //         typingOn(senderID, function() {
-        //             retrieveLastMovie(senderID, function(mov) {
-        //                 writeUserMovie(senderID, mov, function() {
-        //                     sendMessage(senderID, "Okay! That's great. Have a good one! I'll remember this!");
-        //                 });
-        //             });
-        //         });
-        //     });
-        // } else if (messageText.toLowerCase() == 'reset') {
-        //     resetMovies(senderID);
-        // } else if (AI(messageText, 1)) {
-        //     // send a small text. Like just a chat!
-        //     typingOn(senderID, function() {
-        //         sendMessage(senderID, AI(messageText, 1));
-        //     });
-
-        // } else {
-        //     // we don't recognize what the user said
-        //     sendError(senderID, 0);
-        // }
         process.stdout.write(JSON.stringify(message));
     }
 
 
 
 }
-
-
 
 function retrieveLastMovie(id, cb) {
     User.findById(id, function(err, user) {
@@ -448,58 +408,6 @@ function retrieveLastMovie(id, cb) {
             }
         }
     });
-}
-
-// *************** AI
-function AI(query, ctx, senderID) {
-    // 0 - INTENT - Suggest a movie
-    // 1 - INTENT - General
-    query = query.toLowerCase();
-    query = query.replace(/[^a-zA-Z]/g, "");
-    if (ctx === 0) {
-        if (query.includes("good") || query.includes("suggest") || query.includes("film") || query.includes("movie") || query.includes("tell") || query.includes("watch") || query.includes("somethingnew")) {
-            // genre check
-            genr(function(genres) {
-                new_genres = genres.filter(function(e, i) {
-                    e = e.replace(/[^a-zA-Z]/g, "");
-                    e = e.toLowerCase();
-                    if (query.match(e)) {
-                        return true;
-                    }
-                });
-                saveToGenre(senderID, new_genres, function() {
-                    generateMovie(senderID);
-                });
-            });
-
-
-        } else {
-            return false;
-        }
-    } else if (ctx == 1) {
-        // okay so this is the general type of umm, conversation
-        if (query.includes("hey") || query.match("hi") || query.match("hola") || query.match("bonjour")) {
-            return "Hello there human! I'm here to help you! You can ask me to suggest you movies! Beneath every movie i suggest, should be three buttons 😊 just press them for the best experience";
-        } else if (query.includes("sup") || query.includes("whats up")) {
-            return "Nothing much. I'm good";
-        } else if (query.includes("who made you") || query.includes("creator")) {
-            return "I was made by my daddy. His twitter is @candhforlife";
-        } else {
-            return false;
-        }
-    } else if (ctx == 2) {
-        if (query.includes("another") || query.includes("again") || query.includes("better") || query.includes("else")) {
-            return true;
-        }
-    } else if (ctx == 3) {
-        if (query.includes("seen") || query.includes("watched")) {
-            return true;
-        }
-    } else if (ctx == 4) {
-        if (query.includes("great") || query.includes("illwatch")) {
-            return true;
-        }
-    }
 }
 
 function sendError(recipientId, ctx) {
