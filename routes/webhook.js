@@ -244,7 +244,7 @@ function receivedMessage(event) {
 
 
         var ai = api.textRequest(messageText, {
-            sessionId: guid()
+            sessionId: 'suggestr'
         });
 
         ai.on('response', function(response) {
