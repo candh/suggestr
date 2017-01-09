@@ -248,7 +248,41 @@ function receivedMessage(event) {
         });
 
         ai.on('response', function(response) {
-            console.log(`\n\n\n\n\n\n${response}\n\n\n\n\n\n`);
+
+            var result = response.result;
+            var parameters = result.parameters;
+            var action = result.action;
+
+            if (action == 'suggest.movie') {
+                // user asked for a movie
+
+                var genre = parameters.genre;
+                var type = parameters.type;
+
+                console.log(genre, type)
+            
+
+            } else if (action == 'actions') {
+                var actions = parameters.actions;
+                
+                
+                switch (actions) {
+                    case 'watched':
+                        console.log('ALREADY SEEN')
+                        break;
+                    case "i'll watch":
+                        console.log('USER WILL WATCH')
+                        break;
+                    case "another one":
+                        console.log('ANOTHER ONE');
+                        break;
+                    // aint nobody got time fo default my ni... nevermind
+                }
+
+
+
+            }
+
         });
 
         ai.end();
