@@ -237,9 +237,10 @@ function receivedMessage(event) {
         ai.on('response', function(response) {
             action = response.action;
             parameters = response.parameters;
-            genre = response.parameters.genre;
+            //genre = response.parameters.genre;
+
             if (action == 'suggest.movie') {
-                console.log(action, parameters, genre);
+                console.log(action, parameters);
             }
         });
         ai.end();
