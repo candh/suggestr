@@ -238,10 +238,8 @@ function receivedMessage(event) {
             action = response.action;
             parameters = response.parameters;
             //genre = response.parameters.genre;
-
-            if (action == 'suggest.movie') {
-                console.log(action, parameters);
-            }
+                console.log(`\n\n\n\n\n\n\n\n ${response} \n\n\n\n\n\n\n\n`);
+            
         });
         ai.end();
         console.log('\n\n\n messsage recieved \n\n\n', event.message);
@@ -808,7 +806,7 @@ function callSendAPI(messageData) {
             });
         } else {
             console.error("Unable to send message.");
-            console.error(response);
+            //console.error(response);
             console.error(error);
         }
     });
