@@ -278,12 +278,12 @@ function receivedMessage(event) {
                             new_genres = genres.filter(function(e, i) {
                                 e = e.replace(/[^a-zA-Z]/g, "");
                                 e = e.toLowerCase();
-                                
-                                genre.forEach(function(j, b){
-                                    if(j.match(e)){
+
+                                for (var i = 0; i < genre.length; i++) {
+                                    if(genre[i].match(e)){
                                         return true;
                                     }
-                                });                      
+                                }
                             });
 
                             console.log(new_genres);
