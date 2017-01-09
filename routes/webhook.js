@@ -238,7 +238,7 @@ function receivedMessage(event) {
             action = response.action;
             parameters = response.parameters;
             //genre = response.parameters.genre;
-                console.log(`\n\n\n\n\n\n\n\n ${JSON.parse(response)} \n\n\n\n\n\n\n\n`);
+                console.log(`\n\n\n\n\n\n\n\n ${response.action} \n\n\n\n\n\n\n\n`);
             
         });
         ai.end();
