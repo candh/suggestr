@@ -365,7 +365,7 @@ function receivedMessage(event) {
                             break;
                             // aint nobody got time fo default my ni... nevermind
                     }
-                } else if (action == smalltalk.greetings) {
+                } else if (action == 'smalltalk.greetings') {
                     var msg = result.fulfillment.speech;
                     typingOn(senderID, function() {
                         sendMessage(senderID, msg);
