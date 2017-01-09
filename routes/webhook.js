@@ -369,6 +369,8 @@ function receivedMessage(event) {
                                 });
                             })
                             break;
+                        case "reset":
+                            resetMovies(senderID);
                             // aint nobody got time fo default my ni... nevermind
                     }
                 } else if (action == 'smalltalk.greetings') {
@@ -376,9 +378,6 @@ function receivedMessage(event) {
                     typingOn(senderID, function() {
                         sendMessage(senderID, msg);
                     });
-                }
-                else if (messageText.toLowerCase() == 'reset'){
-                    resetMovies(senderID);
                 }
                 else {
                     sendMessage(senderID, dont_get_it[sf]);
