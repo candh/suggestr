@@ -243,7 +243,7 @@ function receivedMessage(event) {
     if (messageText) {
 
 
-        console.log('\n\n\n\n\n\n ${messageText} \n\n\n\n\n\n');
+        console.log(`\n\n\n\n\n\n ${messageText} \n\n\n\n\n\n`);
 
         var ai = api.textRequest(messageText, {
             sessionId: 'suggestr'
