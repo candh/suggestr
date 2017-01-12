@@ -8,7 +8,8 @@ var UserSchema = new Schema({
     },
     suggested: Array,
     movies: Array,
-    genre: Array
+    genre: Array,
+    type: Array
 }, {
     _id: false
 })
