@@ -540,10 +540,9 @@ function generateMovieSchema(recipientId, user) {
     });
 
 }
-
 function findByParameters(data) {
 
-    var Genres = data.genres || [];
+    var Genres = data.genre || [];
     var Type = data.type || [];
     var db = "./db/movies.json";
     var file = fs.readFileSync(db, 'utf8');
