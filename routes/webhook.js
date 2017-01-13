@@ -542,8 +542,10 @@ function generateMovieSchema(recipientId, user) {
 }
 function findByParameters(data) {
 
-    var Genres = data.genre || [];
-    var Type = data.type || [];
+    var Genres = data.Genre || [];
+    var Type = data.Type || [];
+
+    console.log("\n\n\n\n", Genres, Type);
     var db = "./db/movies.json";
     var file = fs.readFileSync(db, 'utf8');
 
