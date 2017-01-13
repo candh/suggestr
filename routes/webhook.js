@@ -14,13 +14,15 @@ var API_AI = process.env.apiai;
 var senders = [];
 var mongoose = require('mongoose');
 var User = require('../models/User.model');
-var Dict = require('../models/Dictionary.model');
 mongoose.set('debug', true);
 var _ = require('underscore');
 var genr = require('../tools/genre.js');
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
 var apiai = require('apiai');
 var api = apiai(API_AI);
+
+
+
 var page_id = process.env.page_id;
 var convo = {
     already_seen: [
@@ -243,7 +245,7 @@ function payloadHandler(event) {
             case "I'll watch":
                 typingOn(user_id, function() {
                     sendMessage(user_id, convo.usr_watch[si], function() {
-                        resetGenre(user_id, function() {
+                        resetInfo(user_id, function() {
                             writeUserMovie(user_id, movie_id, function() {});
                         });
                     });
@@ -310,22 +312,29 @@ function receivedMessage(event) {
                             type = null;
                         }
 
+                        var data = {
+                            Type: type,
+                            Genres: new_genres
+                        };
+
                         if (new_genres.length > 0) {
                             // then used did specified some genres
                             sendMessage(senderID, `You specified these genres: ${new_genres.join(', ')}. I'll get to it!`, function() {
-                                saveToGenre(senderID, new_genres, function() {
+                                saveInfoToDb(senderID, data, function() {
                                     generateMovie(senderID, type);
                                 });
                             });
                         } else {
                             sendMessage(senderID, `You specified no genre at all! It's okay, I'll tell you some good movies`, function() {
-                                saveToGenre(senderID, new_genres, function() {
+                                saveInfoToDb(senderID, data, function() {
                                     generateMovie(senderID, type);
                                 });
                             });
                         }
                     });
                     console.log(genre, type)
+
+
                 } else if (action == 'actions') {
                     var actions = parameters.actions;
 
@@ -350,7 +359,7 @@ function receivedMessage(event) {
                             console.log('USER WILL WATCH');
                             typingOn(senderID, function() {
                                 sendMessage(senderID, convo.usr_watch[si], function() {
-                                    resetGenre(senderID, function() {
+                                    resetInfo(senderID, function() {
                                         retrieveLastMovie(senderID, function(mov) {
                                             writeUserMovie(senderID, mov, function() {});
                                         });
@@ -459,12 +468,18 @@ function generateMovieSchema(recipientId, user) {
     var suggested_total = user.suggested;
     var movies_total = user.movies;
     var genre_count = user.genre_count;
-    getGenreForUser(recipientId, function(genre) {
+
+    getDataForUser(recipientId, function(data) {
         while (flag) {
-            files = findByGenre(genre);
-            file = files.genres;
+
+            var Type = data.Type;
+            var Genres = data.Genres;
+            files = findByParameters(data);
+
+            file = files.movieFile;
+
             if (files.error) {
-                sendMessage(recipientId, 'No movie with this genre found!');
+                sendMessage(recipientId, 'No movie with these parameters found!');
                 flag = false;
                 break;
             }
@@ -526,50 +541,98 @@ function generateMovieSchema(recipientId, user) {
 
 }
 
-function findByGenre(new_genres) {
+function findByParameters(data) {
 
+    var Genres = data.genres || [];
+    var Type = data.type || [];
     var db = "./db/movies.json";
     var file = fs.readFileSync(db, 'utf8');
+
+    var genre_flag = false;
+    var type_flag = false;
+
+
     if (file.length > 0) {
         file = JSON.parse(file);
         totalMovies = file.length;
     }
-    if (new_genres.length === 0) {
+    if (Genres.length === 0 && Type.length === 0) {
         return {
-            genres: file,
-            genre_flag: false
+            movieFile: file,
+            genre_flag: genre_flag,
+            type_flag: type_flag
         };
-    }
-    file = file.filter(function(e, i) {
+    } else {
 
-        genre_orig = e.Genre.split(', ');
-        var cl = _.intersection(genre_orig, new_genres);
-        if (cl.length == new_genres.length) {
-            return true;
+        // filtering by genre
+        if (Genres.length > 0) {
+            genre_flag = true;
+
+            file = file.filter(function(e, i) {
+                genre_orig = e.Genre.split(', ');
+                var cl = _.intersection(genre_orig, Genres);
+                if (cl.length == Genres.length) {
+                    return true;
+                }
+            });
         }
-    });
+        // filtering by type
+        if (Type.length > 0) {
+            type_flag = true;
+            // using let because i just got an erection from thinking
+            // about es6
+            let type = Type.toString();
+            switch (type) {
+                case "good":
+                    file = file.filter(function(e, i) {
+                        let score = parseInt(e.Metascore);
+                        if (score >= 65) {
+                            return true;
+                        }
+                    })
+                    break;
+                case "new":
+                    let date = new Date();
+                    let cur_year = date.getFullYear();
+                    file = file.filter((e, i) => {
+                        let mov_year = parseInt(e.Year);
+                        if (mov_year >= 2010 && mov_year <= cur_year) {
+                            return true;
+                        }
+                    });
+                    break;
+            }
+
+
+        }
+
+
+    }
 
     if (file.length > 0) {
-
         return {
-            genre_flag: true,
-            genres: file
+            movieFile: file,
+            genre_flag: genre_flag,
+            type_flag: type_flag
         };
 
     } else {
         return {
-            error: true
+            error: true,
+            genre_flag: genre_flag,
+            type_flag: type_flag,
         };
     }
 }
 
-function getGenreForUser(id, cb) {
+function getDataForUser(id, cb) {
     User.findById(id, function(err, user) {
         if (err) {
             console.log(err);
         } else if (user !== null) {
             if (cb) {
-                cb(user.genre);
+                var data = { Genre: user.genre, Type: user.type };
+                cb(data);
             }
         }
     });
@@ -647,13 +710,16 @@ function movieSchemaSend(res, recipientId) {
 
 }
 
-function saveToGenre(id, genre, cb) {
+function saveInfoToDb(id, data, cb) {
+    var type = data.Type;
+    var genres = data.Genres;
+
     User.findById(id, function(err, user) {
         if (err) {
             console.log(err);
         } else if (user !== null) {
-            user.genre = [];
-            user.genre = genre;
+            user.type = type;
+            user.genre = genres;
             user.save(function(err, updatedUser) {
                 if (err) {
                     console.log(err);
@@ -663,8 +729,7 @@ function saveToGenre(id, genre, cb) {
                 }
             });
         } else if (user === null) {
-            saveUserToDb(id, genre, function() {
-
+            saveUserToDb(id, data, function() {
                 if (cb) {
                     cb();
                 }
@@ -674,13 +739,14 @@ function saveToGenre(id, genre, cb) {
     });
 }
 
-function resetGenre(id, cb) {
+function resetInfo(id, cb) {
 
     User.findById(id, function(err, user) {
         if (err) {
             console.log(err);
         } else if (user !== null) {
             user.genre = [];
+            user.type = [];
             user.save(function(err, updatedUser) {
                 if (err) {
                     console.log(err);
@@ -719,15 +785,18 @@ function saveToSuggested(user, movie, cb) {
     });
 }
 
-function saveUserToDb(user, genres, cb) {
+function saveUserToDb(user, data, cb) {
     var NewUser = new User({
         _id: user
     });
 
-    if (typeof genres == "object") {
+    if (typeof data == "object") {
+        var genres = data.Genres;
+        var type = data.Type;
         NewUser = new User({
             _id: user,
-            genre: genres
+            genre: genres,
+            type: type
         });
     }
 
