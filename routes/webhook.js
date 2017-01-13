@@ -500,7 +500,7 @@ function generateMovieSchema(recipientId, user) {
             movies = movies_T(movies_total);
 
             if (files.genre_flag) {
-                totalMovies = files.genres.length;
+                totalMovies = files.movieFile.length;
             }
 
             if (suggested.length === 0 && movies.length === 0) {
