@@ -192,8 +192,9 @@ function sendGreeting() {
     }, function(error, response, body) {
         
         // debug
+
         console.log(error, response, body)
-        
+
 
         if (!error && response.statusCode == 200) {
             var recipientId = body.recipient_id;
@@ -274,7 +275,7 @@ function receivedMessage(event) {
     if (messageText) {
 
 
-        console.log(`\n\n\n\n\n\n ${messageText} , ${senderID} \n\n\n\n\n\n`);
+        console.log(`\n\n\n\n\n\n debug: ${messageText} , ${senderID} \n\n\n\n\n\n`);
 
         // okay so seems like the message we sent is also echoed back to the script.. with
         // the senderID of the page. why is that? I don't understand that.

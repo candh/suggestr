@@ -20,5 +20,9 @@
     "request": "^2.79.0",
     "serve-favicon": "~2.3.0",
     "underscore": "^1.8.3"
+  },
+  "engines": {
+    "npm": "5.3.x",
+    "node": "8.2.1"
   }
 }
