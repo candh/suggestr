@@ -11,7 +11,6 @@ var PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var DB_USER = process.env.user;
 var DB_PASS = process.env.pass;
 var API_AI = process.env.apiai;
-console.log(DB_USER, DB_PASS)
 var senders = [];
 var mongoose = require('mongoose');
 var User = require('../models/User.model');
