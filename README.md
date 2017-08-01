@@ -3,8 +3,8 @@ A facebook movie 🎬 suggesting bot
 
 [See it in action](https://vimeo.com/197744845)
 
-### Status ✅
-Its up and working! Try it...
+### Status ❌
+Down for maintaince since 10 PM (GMT+5 Pakistan Time) 1 August, 2017. Will be back soon!
 
 [m.me/movie.suggester](https://m.me/movie.suggester)
 
