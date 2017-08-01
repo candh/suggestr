@@ -283,6 +283,7 @@ function receivedMessage(event) {
                 var result = response.result;
                 var parameters = result.parameters;
                 var action = result.action;
+                var source = result.source
 
                 console.log("debug:", response)
 
@@ -338,7 +339,7 @@ function receivedMessage(event) {
 
                     var al = getRandomInt(0, convo.already_seen.length - 1);
                     var si = getRandomInt(0, convo.usr_watch.length - 1);
-                    
+
 
                     switch (actions) {
                         case 'watched':
@@ -377,22 +378,12 @@ function receivedMessage(event) {
                             resetMovies(senderID);
                             // aint nobody got time fo default my ni... nevermind
                     }
-                } else if (action == 'smalltalk.greetings') {
-                    var msg = result.fulfillment.speech;
-                    typingOn(senderID, function() {
-                        sendMessage(senderID, msg);
-                    });
-                } else if (action == 'smalltalk.person') {
+                } else if (source == "domains") {
                     var msg = result.fulfillment.speech;
                     typingOn(senderID, function() {
                         sendMessage(senderID, msg);
                     });
                 } else if (action == 'input.unknown') {
-                    var msg = result.fulfillment.speech;
-                    typingOn(senderID, function() {
-                        sendMessage(senderID, msg);
-                    });
-                } else if (action == 'smalltalk.agent') {
                     var msg = result.fulfillment.speech;
                     typingOn(senderID, function() {
                         sendMessage(senderID, msg);
@@ -539,6 +530,7 @@ function generateMovieSchema(recipientId, user) {
     });
 
 }
+
 function findByParameters(data) {
 
     var Genres = data.Genre || [];
