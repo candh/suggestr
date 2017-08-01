@@ -153,10 +153,7 @@ router.post('/', function(req, res) {
                     } else {
                         receivedMessage(event);
                     }
-
                     //receivedMessage(event);
-
-
                 } else {
                     console.log("Webhook received unknown event: ", event);
                 }
@@ -190,12 +187,6 @@ function sendGreeting() {
         json: data
 
     }, function(error, response, body) {
-        
-        // debug
-
-        console.log(error, response, body)
-
-
         if (!error && response.statusCode == 200) {
             var recipientId = body.recipient_id;
             var messageId = body.message_id;
@@ -906,6 +897,11 @@ function callSendAPI(messageData, cb) {
         json: messageData
 
     }, function(error, response, body) {
+        // debug
+
+        console.log("debug:", error, response, body)
+
+
         if (!error && response.statusCode == 200) {
             var recipientId = body.recipient_id;
             var messageId = body.message_id;
