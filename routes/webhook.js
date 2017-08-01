@@ -874,6 +874,8 @@ function resetMovies(recipientId, cb) {
 // ******************** API functions
 
 function sendMessage(recipientId, message, cb) {
+    console.log("debug:", recipientId, message)
+    console.trace("whom calling you")
     typingOff(recipientId, function() {
         var messageData = {
             recipient: {
@@ -888,7 +890,6 @@ function sendMessage(recipientId, message, cb) {
 }
 
 function callSendAPI(messageData, cb) {
-    console.log("debug:", messageData)
     request({
         uri: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
@@ -898,17 +899,13 @@ function callSendAPI(messageData, cb) {
         json: messageData
 
     }, function(error, response, body) {
-        // debug
-
-        // console.log("debug:", error, response, body)
-
-
         if (!error && response.statusCode == 200) {
             var recipientId = body.recipient_id;
             var messageId = body.message_id;
 
             //console.log("Successfully sent message with id %s to recipient %s",
             // messageId, recipientId);
+
             if (cb) {
                 cb();
             }
