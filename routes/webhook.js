@@ -284,6 +284,8 @@ function receivedMessage(event) {
                 var parameters = result.parameters;
                 var action = result.action;
 
+                console.log("debug:", response)
+
                 if (action == 'suggest.movie') {
                     // user asked for a movie
 
