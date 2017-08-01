@@ -336,7 +336,7 @@ function receivedMessage(event) {
 
                     var al = getRandomInt(0, convo.already_seen.length - 1);
                     var si = getRandomInt(0, convo.usr_watch.length - 1);
-                    var sf = getRandomInt(0, convo.dont_get_it.length - 1);
+                    
 
                     switch (actions) {
                         case 'watched':
@@ -396,7 +396,7 @@ function receivedMessage(event) {
                         sendMessage(senderID, msg);
                     });
                 } else {
-                    console.log("debug: do you not get it?", convo.dont_get_it[sf])
+                    var sf = getRandomInt(0, convo.dont_get_it.length - 1);
                     sendMessage(senderID, convo.dont_get_it[sf]);
                 }
 
