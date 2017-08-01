@@ -888,6 +888,7 @@ function sendMessage(recipientId, message, cb) {
 }
 
 function callSendAPI(messageData, cb) {
+    console.log("debug:", messageData)
     request({
         uri: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
@@ -899,7 +900,7 @@ function callSendAPI(messageData, cb) {
     }, function(error, response, body) {
         // debug
 
-        console.log("debug:", error, response, body)
+        // console.log("debug:", error, response, body)
 
 
         if (!error && response.statusCode == 200) {
