@@ -396,6 +396,7 @@ function receivedMessage(event) {
                         sendMessage(senderID, msg);
                     });
                 } else {
+                    console.log("debug: do you not get it?", convo.dont_get_it[sf])
                     sendMessage(senderID, convo.dont_get_it[sf]);
                 }
 
