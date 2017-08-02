@@ -17,7 +17,7 @@ var User = require('../models/User.model');
 mongoose.set('debug', true);
 var _ = require('underscore');
 var genr = require('../tools/genre.js');
-mongoose.createConnection(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
+mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@ds149278.mlab.com:49278/messenger-bot`);
 
 var apiai = require('apiai');
 var api = apiai(API_AI);
