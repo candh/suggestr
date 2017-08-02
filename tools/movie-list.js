@@ -386,7 +386,21 @@ var movie_list = [
     "The Insider",
     "Body of Lies",
     "Southpaw",
-    "Avengers: Age of Ultron"
+    "Avengers: Age of Ultron",
+    "Dunkirk",
+    "Vanilla Sky",
+    "Casino",
+    "The Godfather Part II",
+    "Silence",
+    "Blade Runner",
+    "Full Metal Jacket",
+    "TRON: Legacy",
+    "Due Date",
+    "Rocky",
+    "Children of Men",
+    "I Origins",
+    "The Breakfast Club",
+    "Demolition"
 ];
 console.log(movie_list.length);
 module.exports = movie_list;

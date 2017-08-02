@@ -12,8 +12,10 @@ var fullData = [];
 var results = 0;
 var parsedData = [];
 
+var api_token = process.env.token;
+
 movie_list.forEach(function(element, index) {
-    request(`http://www.omdbapi.com/?t=${element}&y=&plot=short&r=json`, function(error, response, body) {
+    request(`http://www.omdbapi.com/?t=${element}&y=&plot=short&r=json&apikey=${api_token}`, function(error, response, body) {
         if (!error && response.statusCode == 200) {
             if (JSON.parse(body).Response == "False") {
                 // so like the movie is not found. not cool
